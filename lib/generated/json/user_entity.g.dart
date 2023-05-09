@@ -15,7 +15,7 @@ UserEntity $UserEntityFromJson(Map<String, dynamic> json) {
   if (updatedAt != null) {
     userEntity.updatedAt = updatedAt;
   }
-  final dynamic deletedAt = jsonConvert.convert<dynamic>(json['DeletedAt']);
+  final String? deletedAt = jsonConvert.convert<String>(json['DeletedAt']);
   if (deletedAt != null) {
     userEntity.deletedAt = deletedAt;
   }
@@ -92,9 +92,9 @@ UserRoles $UserRolesFromJson(Map<String, dynamic> json) {
   if (nombre != null) {
     userRoles.nombre = nombre;
   }
-  final String? Description = jsonConvert.convert<String>(json['Description']);
-  if (Description != null) {
-    userRoles.description = Description;
+  final String? description = jsonConvert.convert<String>(json['Description']);
+  if (description != null) {
+    userRoles.description = description;
   }
   final dynamic usuarios = jsonConvert.convert<dynamic>(json['Usuarios']);
   if (usuarios != null) {
@@ -115,6 +115,7 @@ Map<String, dynamic> $UserRolesToJson(UserRoles entity) {
   data['UpdatedAt'] = entity.updatedAt;
   data['DeletedAt'] = entity.deletedAt;
   data['Nombre'] = entity.nombre;
+  data['Description'] = entity.description;
   data['Usuarios'] = entity.usuarios;
   data['Rutas'] = entity.rutas?.map((v) => v.toJson()).toList();
   return data;

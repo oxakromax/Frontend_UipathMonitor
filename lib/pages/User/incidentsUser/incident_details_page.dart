@@ -1,20 +1,19 @@
+import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Providers/GeneralProvider.dart';
-import '../../../classes/incidents_entity.dart';
-import '../../../main.dart';
 import 'incident_detail_edit_page.dart';
 
 class IncidentDetailsScreen extends StatefulWidget {
-  IncidentsProcess incident;
-  ProcessesWithIncidents ProcessEntity;
+  ProcessesIncidentesProceso incident;
+  ProcessesEntity ProcessClass;
   final Function? onIncidentUpdated;
 
   IncidentDetailsScreen(
       {required this.incident,
       this.onIncidentUpdated,
-      required this.ProcessEntity});
+      required this.ProcessClass});
 
   @override
   _IncidentDetailsScreenState createState() => _IncidentDetailsScreenState();
@@ -160,9 +159,9 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
               ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: widget.ProcessEntity.usuarios!.length,
+                itemCount: widget.ProcessClass.usuarios!.length,
                 itemBuilder: (BuildContext context, int index) {
-                  var contact = widget.ProcessEntity.usuarios![index];
+                  var contact = widget.ProcessClass.usuarios![index];
                   return ListTile(
                     title: Text(contact.nombre ?? ''),
                     subtitle: Text(contact.email ?? ''),
@@ -188,9 +187,9 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
               ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: widget.ProcessEntity.clientes!.length,
+                itemCount: widget.ProcessClass.clientes!.length,
                 itemBuilder: (BuildContext context, int index) {
-                  var contact = widget.ProcessEntity.clientes![index];
+                  var contact = widget.ProcessClass.clientes![index];
                   return ListTile(
                     title: Text("Nombre: ${contact.nombre}"),
                     subtitle: Text("Email: ${contact.email}"),

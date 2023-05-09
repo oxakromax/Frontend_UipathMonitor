@@ -3,9 +3,9 @@ import 'package:UipathMonitor/generated/json/base/json_convert_content.dart';
 
 OrganizationsEntity $OrganizationsEntityFromJson(Map<String, dynamic> json) {
   final OrganizationsEntity organizationsEntity = OrganizationsEntity();
-  final double? iD = jsonConvert.convert<double>(json['ID']);
-  if (iD != null) {
-    organizationsEntity.id = iD;
+  final double? id = jsonConvert.convert<double>(json['ID']);
+  if (id != null) {
+    organizationsEntity.id = id;
   }
   final String? createdAt = jsonConvert.convert<String>(json['CreatedAt']);
   if (createdAt != null) {

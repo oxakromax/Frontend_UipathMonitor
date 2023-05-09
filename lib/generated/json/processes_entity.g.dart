@@ -3,7 +3,7 @@ import 'package:UipathMonitor/generated/json/base/json_convert_content.dart';
 
 ProcessesEntity $ProcessesEntityFromJson(Map<String, dynamic> json) {
   final ProcessesEntity processesEntity = ProcessesEntity();
-  final double? iD = jsonConvert.convert<double>(json['ID']);
+  final int? iD = jsonConvert.convert<int>(json['ID']);
   if (iD != null) {
     processesEntity.iD = iD;
   }
@@ -27,7 +27,12 @@ ProcessesEntity $ProcessesEntityFromJson(Map<String, dynamic> json) {
   if (alias != null) {
     processesEntity.alias = alias;
   }
-  final double? folderid = jsonConvert.convert<double>(json['Folderid']);
+  final int? uipathProcessID =
+      jsonConvert.convert<int>(json['UipathProcessID']);
+  if (uipathProcessID != null) {
+    processesEntity.uipathProcessID = uipathProcessID;
+  }
+  final int? folderid = jsonConvert.convert<int>(json['Folderid']);
   if (folderid != null) {
     processesEntity.folderid = folderid;
   }
@@ -35,25 +40,27 @@ ProcessesEntity $ProcessesEntityFromJson(Map<String, dynamic> json) {
   if (foldername != null) {
     processesEntity.foldername = foldername;
   }
-  final double? organizacionID =
-      jsonConvert.convert<double>(json['OrganizacionID']);
+  final int? organizacionID = jsonConvert.convert<int>(json['OrganizacionID']);
   if (organizacionID != null) {
     processesEntity.organizacionID = organizacionID;
   }
-  final double? warningTolerance =
-      jsonConvert.convert<double>(json['WarningTolerance']);
+  final int? warningTolerance =
+      jsonConvert.convert<int>(json['WarningTolerance']);
   if (warningTolerance != null) {
     processesEntity.warningTolerance = warningTolerance;
   }
-  final double? errorTolerance =
-      jsonConvert.convert<double>(json['ErrorTolerance']);
+  final int? errorTolerance = jsonConvert.convert<int>(json['ErrorTolerance']);
   if (errorTolerance != null) {
     processesEntity.errorTolerance = errorTolerance;
   }
-  final double? fatalTolerance =
-      jsonConvert.convert<double>(json['FatalTolerance']);
+  final int? fatalTolerance = jsonConvert.convert<int>(json['FatalTolerance']);
   if (fatalTolerance != null) {
     processesEntity.fatalTolerance = fatalTolerance;
+  }
+  final bool? activeMonitoring =
+      jsonConvert.convert<bool>(json['ActiveMonitoring']);
+  if (activeMonitoring != null) {
+    processesEntity.activeMonitoring = activeMonitoring;
   }
   final ProcessesOrganizacion? organizacion =
       jsonConvert.convert<ProcessesOrganizacion>(json['Organizacion']);
@@ -87,12 +94,14 @@ Map<String, dynamic> $ProcessesEntityToJson(ProcessesEntity entity) {
   data['DeletedAt'] = entity.deletedAt;
   data['Nombre'] = entity.nombre;
   data['Alias'] = entity.alias;
+  data['UipathProcessID'] = entity.uipathProcessID;
   data['Folderid'] = entity.folderid;
   data['Foldername'] = entity.foldername;
   data['OrganizacionID'] = entity.organizacionID;
   data['WarningTolerance'] = entity.warningTolerance;
   data['ErrorTolerance'] = entity.errorTolerance;
   data['FatalTolerance'] = entity.fatalTolerance;
+  data['ActiveMonitoring'] = entity.activeMonitoring;
   data['Organizacion'] = entity.organizacion?.toJson();
   data['IncidentesProceso'] =
       entity.incidentesProceso?.map((v) => v.toJson()).toList();
@@ -104,7 +113,7 @@ Map<String, dynamic> $ProcessesEntityToJson(ProcessesEntity entity) {
 ProcessesOrganizacion $ProcessesOrganizacionFromJson(
     Map<String, dynamic> json) {
   final ProcessesOrganizacion processesOrganizacion = ProcessesOrganizacion();
-  final double? iD = jsonConvert.convert<double>(json['ID']);
+  final int? iD = jsonConvert.convert<int>(json['ID']);
   if (iD != null) {
     processesOrganizacion.iD = iD;
   }
@@ -187,7 +196,7 @@ ProcessesIncidentesProceso $ProcessesIncidentesProcesoFromJson(
     Map<String, dynamic> json) {
   final ProcessesIncidentesProceso processesIncidentesProceso =
       ProcessesIncidentesProceso();
-  final double? iD = jsonConvert.convert<double>(json['ID']);
+  final int? iD = jsonConvert.convert<int>(json['ID']);
   if (iD != null) {
     processesIncidentesProceso.iD = iD;
   }
@@ -203,7 +212,7 @@ ProcessesIncidentesProceso $ProcessesIncidentesProcesoFromJson(
   if (deletedAt != null) {
     processesIncidentesProceso.deletedAt = deletedAt;
   }
-  final double? procesoID = jsonConvert.convert<double>(json['ProcesoID']);
+  final int? procesoID = jsonConvert.convert<int>(json['ProcesoID']);
   if (procesoID != null) {
     processesIncidentesProceso.procesoID = procesoID;
   }
@@ -215,11 +224,11 @@ ProcessesIncidentesProceso $ProcessesIncidentesProcesoFromJson(
   if (incidente != null) {
     processesIncidentesProceso.incidente = incidente;
   }
-  final double? tipo = jsonConvert.convert<double>(json['Tipo']);
+  final int? tipo = jsonConvert.convert<int>(json['Tipo']);
   if (tipo != null) {
     processesIncidentesProceso.tipo = tipo;
   }
-  final double? estado = jsonConvert.convert<double>(json['Estado']);
+  final int? estado = jsonConvert.convert<int>(json['Estado']);
   if (estado != null) {
     processesIncidentesProceso.estado = estado;
   }
@@ -251,7 +260,7 @@ ProcessesIncidentesProcesoDetalles $ProcessesIncidentesProcesoDetallesFromJson(
     Map<String, dynamic> json) {
   final ProcessesIncidentesProcesoDetalles processesIncidentesProcesoDetalles =
       ProcessesIncidentesProcesoDetalles();
-  final double? iD = jsonConvert.convert<double>(json['ID']);
+  final int? iD = jsonConvert.convert<int>(json['ID']);
   if (iD != null) {
     processesIncidentesProcesoDetalles.iD = iD;
   }
@@ -267,7 +276,7 @@ ProcessesIncidentesProcesoDetalles $ProcessesIncidentesProcesoDetallesFromJson(
   if (deletedAt != null) {
     processesIncidentesProcesoDetalles.deletedAt = deletedAt;
   }
-  final double? incidenteID = jsonConvert.convert<double>(json['IncidenteID']);
+  final int? incidenteID = jsonConvert.convert<int>(json['IncidenteID']);
   if (incidenteID != null) {
     processesIncidentesProcesoDetalles.incidenteID = incidenteID;
   }
@@ -302,7 +311,7 @@ Map<String, dynamic> $ProcessesIncidentesProcesoDetallesToJson(
 
 ProcessesClientes $ProcessesClientesFromJson(Map<String, dynamic> json) {
   final ProcessesClientes processesClientes = ProcessesClientes();
-  final double? iD = jsonConvert.convert<double>(json['ID']);
+  final int? iD = jsonConvert.convert<int>(json['ID']);
   if (iD != null) {
     processesClientes.iD = iD;
   }
@@ -330,8 +339,7 @@ ProcessesClientes $ProcessesClientesFromJson(Map<String, dynamic> json) {
   if (email != null) {
     processesClientes.email = email;
   }
-  final double? organizacionID =
-      jsonConvert.convert<double>(json['OrganizacionID']);
+  final int? organizacionID = jsonConvert.convert<int>(json['OrganizacionID']);
   if (organizacionID != null) {
     processesClientes.organizacionID = organizacionID;
   }
@@ -364,7 +372,7 @@ Map<String, dynamic> $ProcessesClientesToJson(ProcessesClientes entity) {
 
 ProcessesUsuarios $ProcessesUsuariosFromJson(Map<String, dynamic> json) {
   final ProcessesUsuarios processesUsuarios = ProcessesUsuarios();
-  final double? iD = jsonConvert.convert<double>(json['ID']);
+  final int? iD = jsonConvert.convert<int>(json['ID']);
   if (iD != null) {
     processesUsuarios.iD = iD;
   }

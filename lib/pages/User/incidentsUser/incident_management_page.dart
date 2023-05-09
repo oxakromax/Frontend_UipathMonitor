@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:UipathMonitor/classes/processes_entity.dart';
+import 'package:UipathMonitor/pages/User/incidentsUser/incident_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:UipathMonitor/pages/User/incidentsUser/incident_details_page.dart';
 
 import '../../../Providers/GeneralProvider.dart';
 import '../../../app_drawer.dart';
@@ -87,7 +88,7 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
   }
 
   Widget _buildIncidentList(
-      List<ProcessesWithIncidents>? incidentList, bool isFinished) {
+      List<ProcessesEntity>? incidentList, bool isFinished) {
     if (incidentList == null || incidentList.isEmpty) {
       return const Center(child: Text('No hay incidentes'));
     }
@@ -171,7 +172,7 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
                         builder: (context) => IncidentDetailsScreen(
                           incident: i,
                           onIncidentUpdated: updateIncidents,
-                          ProcessEntity: incident,
+                          ProcessClass: incident,
                         ),
                       ),
                     );

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,10 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Providers/GeneralProvider.dart';
-import '../../../classes/incidents_entity.dart';
 
 class IncidentDetailEditPage extends StatefulWidget {
-  IncidentsProcess incident;
+  ProcessesIncidentesProceso incident;
 
   IncidentDetailEditPage({Key? key, required this.incident}) : super(key: key);
 
@@ -63,8 +63,8 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
     final response = await http.Response.fromStream(await request.send());
 
     if (response.statusCode == 200) {
-      IncidentsProcess updatedIncident =
-          IncidentsProcess.fromJson(jsonDecode(response.body));
+      ProcessesIncidentesProceso updatedIncident =
+          ProcessesIncidentesProceso.fromJson(jsonDecode(response.body));
       await ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Se ha guardado el progreso'),
         duration: Duration(seconds: 2),

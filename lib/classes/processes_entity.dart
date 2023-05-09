@@ -6,7 +6,7 @@ import 'package:UipathMonitor/generated/json/processes_entity.g.dart';
 @JsonSerializable()
 class ProcessesEntity {
   @JSONField(name: "ID")
-  double? iD;
+  int? iD;
   @JSONField(name: "CreatedAt")
   String? createdAt;
   @JSONField(name: "UpdatedAt")
@@ -17,18 +17,22 @@ class ProcessesEntity {
   String? nombre;
   @JSONField(name: "Alias")
   String? alias;
+  @JSONField(name: "UipathProcessID")
+  int? uipathProcessID;
   @JSONField(name: "Folderid")
-  double? folderid;
+  int? folderid;
   @JSONField(name: "Foldername")
   String? foldername;
   @JSONField(name: "OrganizacionID")
-  double? organizacionID;
+  int? organizacionID;
   @JSONField(name: "WarningTolerance")
-  double? warningTolerance;
+  int? warningTolerance;
   @JSONField(name: "ErrorTolerance")
-  double? errorTolerance;
+  int? errorTolerance;
   @JSONField(name: "FatalTolerance")
-  double? fatalTolerance;
+  int? fatalTolerance;
+  @JSONField(name: "ActiveMonitoring")
+  bool? activeMonitoring;
   @JSONField(name: "Organizacion")
   ProcessesOrganizacion? organizacion;
   @JSONField(name: "IncidentesProceso")
@@ -46,18 +50,20 @@ class ProcessesEntity {
   Map<String, dynamic> toJson() => $ProcessesEntityToJson(this);
 
   ProcessesEntity copyWith(
-      {double? iD,
+      {int? iD,
       String? createdAt,
       String? updatedAt,
       dynamic deletedAt,
       String? nombre,
       String? alias,
-      double? folderid,
+      int? uipathProcessID,
+      int? folderid,
       String? foldername,
-      double? organizacionID,
-      double? warningTolerance,
-      double? errorTolerance,
-      double? fatalTolerance,
+      int? organizacionID,
+      int? warningTolerance,
+      int? errorTolerance,
+      int? fatalTolerance,
+      bool? activeMonitoring,
       ProcessesOrganizacion? organizacion,
       List<ProcessesIncidentesProceso>? incidentesProceso,
       List<ProcessesClientes>? clientes,
@@ -69,12 +75,14 @@ class ProcessesEntity {
       ..deletedAt = deletedAt ?? this.deletedAt
       ..nombre = nombre ?? this.nombre
       ..alias = alias ?? this.alias
+      ..uipathProcessID = uipathProcessID ?? this.uipathProcessID
       ..folderid = folderid ?? this.folderid
       ..foldername = foldername ?? this.foldername
       ..organizacionID = organizacionID ?? this.organizacionID
       ..warningTolerance = warningTolerance ?? this.warningTolerance
       ..errorTolerance = errorTolerance ?? this.errorTolerance
       ..fatalTolerance = fatalTolerance ?? this.fatalTolerance
+      ..activeMonitoring = activeMonitoring ?? this.activeMonitoring
       ..organizacion = organizacion ?? this.organizacion
       ..incidentesProceso = incidentesProceso ?? this.incidentesProceso
       ..clientes = clientes ?? this.clientes
@@ -90,7 +98,7 @@ class ProcessesEntity {
 @JsonSerializable()
 class ProcessesOrganizacion {
   @JSONField(name: "ID")
-  double? iD;
+  int? iD;
   @JSONField(name: "CreatedAt")
   String? createdAt;
   @JSONField(name: "UpdatedAt")
@@ -126,7 +134,7 @@ class ProcessesOrganizacion {
   Map<String, dynamic> toJson() => $ProcessesOrganizacionToJson(this);
 
   ProcessesOrganizacion copyWith(
-      {double? iD,
+      {int? iD,
       String? createdAt,
       String? updatedAt,
       dynamic deletedAt,
@@ -166,7 +174,7 @@ class ProcessesOrganizacion {
 @JsonSerializable()
 class ProcessesIncidentesProceso {
   @JSONField(name: "ID")
-  double? iD;
+  int? iD;
   @JSONField(name: "CreatedAt")
   String? createdAt;
   @JSONField(name: "UpdatedAt")
@@ -174,15 +182,15 @@ class ProcessesIncidentesProceso {
   @JSONField(name: "DeletedAt")
   dynamic deletedAt;
   @JSONField(name: "ProcesoID")
-  double? procesoID;
+  int? procesoID;
   @JSONField(name: "Proceso")
   dynamic proceso;
   @JSONField(name: "Incidente")
   String? incidente;
   @JSONField(name: "Tipo")
-  double? tipo;
+  int? tipo;
   @JSONField(name: "Estado")
-  double? estado;
+  int? estado;
   @JSONField(name: "Detalles")
   List<ProcessesIncidentesProcesoDetalles>? detalles;
 
@@ -194,15 +202,15 @@ class ProcessesIncidentesProceso {
   Map<String, dynamic> toJson() => $ProcessesIncidentesProcesoToJson(this);
 
   ProcessesIncidentesProceso copyWith(
-      {double? iD,
+      {int? iD,
       String? createdAt,
       String? updatedAt,
       dynamic deletedAt,
-      double? procesoID,
+      int? procesoID,
       dynamic proceso,
       String? incidente,
-      double? tipo,
-      double? estado,
+      int? tipo,
+      int? estado,
       List<ProcessesIncidentesProcesoDetalles>? detalles}) {
     return ProcessesIncidentesProceso()
       ..iD = iD ?? this.iD
@@ -226,7 +234,7 @@ class ProcessesIncidentesProceso {
 @JsonSerializable()
 class ProcessesIncidentesProcesoDetalles {
   @JSONField(name: "ID")
-  double? iD;
+  int? iD;
   @JSONField(name: "CreatedAt")
   String? createdAt;
   @JSONField(name: "UpdatedAt")
@@ -234,7 +242,7 @@ class ProcessesIncidentesProcesoDetalles {
   @JSONField(name: "DeletedAt")
   dynamic deletedAt;
   @JSONField(name: "IncidenteID")
-  double? incidenteID;
+  int? incidenteID;
   @JSONField(name: "Detalle")
   String? detalle;
   @JSONField(name: "FechaInicio")
@@ -252,11 +260,11 @@ class ProcessesIncidentesProcesoDetalles {
       $ProcessesIncidentesProcesoDetallesToJson(this);
 
   ProcessesIncidentesProcesoDetalles copyWith(
-      {double? iD,
+      {int? iD,
       String? createdAt,
       String? updatedAt,
       dynamic deletedAt,
-      double? incidenteID,
+      int? incidenteID,
       String? detalle,
       String? fechaInicio,
       String? fechaFin}) {
@@ -280,7 +288,7 @@ class ProcessesIncidentesProcesoDetalles {
 @JsonSerializable()
 class ProcessesClientes {
   @JSONField(name: "ID")
-  double? iD;
+  int? iD;
   @JSONField(name: "CreatedAt")
   String? createdAt;
   @JSONField(name: "UpdatedAt")
@@ -294,7 +302,7 @@ class ProcessesClientes {
   @JSONField(name: "Email")
   String? email;
   @JSONField(name: "OrganizacionID")
-  double? organizacionID;
+  int? organizacionID;
   @JSONField(name: "Organizacion")
   dynamic organizacion;
   @JSONField(name: "Procesos")
@@ -308,14 +316,14 @@ class ProcessesClientes {
   Map<String, dynamic> toJson() => $ProcessesClientesToJson(this);
 
   ProcessesClientes copyWith(
-      {double? iD,
+      {int? iD,
       String? createdAt,
       String? updatedAt,
       dynamic deletedAt,
       String? nombre,
       String? apellido,
       String? email,
-      double? organizacionID,
+      int? organizacionID,
       dynamic organizacion,
       dynamic procesos}) {
     return ProcessesClientes()
@@ -340,7 +348,7 @@ class ProcessesClientes {
 @JsonSerializable()
 class ProcessesUsuarios {
   @JSONField(name: "ID")
-  double? iD;
+  int? iD;
   @JSONField(name: "CreatedAt")
   String? createdAt;
   @JSONField(name: "UpdatedAt")
@@ -370,7 +378,7 @@ class ProcessesUsuarios {
   Map<String, dynamic> toJson() => $ProcessesUsuariosToJson(this);
 
   ProcessesUsuarios copyWith(
-      {double? iD,
+      {int? iD,
       String? createdAt,
       String? updatedAt,
       dynamic deletedAt,
