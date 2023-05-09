@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:UipathMonitor/pages/Admin/Organization/OrganizationListPage.dart';
+import 'package:UipathMonitor/pages/Admin/Processes/processes_list_page.dart';
 import 'package:UipathMonitor/pages/Admin/Users/UsersListPage.dart';
 import 'package:UipathMonitor/pages/ForgotPasswordPage.dart';
 import 'package:UipathMonitor/pages/User/ProfilePage.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/forgot': (context) => ForgotPasswordPage(),
         '/admin/organization': (context) => OrganizationListScreen(),
         '/admin/users': (context) => UsersListPage(),
+        '/user/processes': (context) => ProcessesListPage(),
       },
     );
   }

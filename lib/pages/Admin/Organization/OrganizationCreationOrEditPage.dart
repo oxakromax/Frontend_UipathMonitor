@@ -1,6 +1,6 @@
+import 'package:UipathMonitor/models/organization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:UipathMonitor/models/organization.dart';
 
 import '../../../Providers/ApiProvider.dart';
 
@@ -35,6 +35,9 @@ class _OrganizationCreationOrEditPageState
     if (widget.isEditing) {
       SetDefaultFieldsEditing();
     } else {
+      _organizationAppUrlController.text = 'https://cloud.uipath.com/';
+      _organizationAppScopeController.text =
+          'OR.Monitoring OR.Folders OR.Execution OR.Jobs';
       _checkboxOrgEdit = true;
     }
   }
@@ -73,12 +76,22 @@ class _OrganizationCreationOrEditPageState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Organization Name',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            'Organization Name',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          Tooltip(
+                            message:
+                                'Nombre de la organización en la que se encuentra el robot',
+                            child: Icon(Icons.info_outline_rounded),
+                          )
+                        ],
                       ),
                       TextField(
                         controller: _organizationNameController,
@@ -102,7 +115,7 @@ class _OrganizationCreationOrEditPageState
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () async {
-                          Organization newOrg;
+                          Organization? newOrg;
                           Organization organization = Organization(
                               id: widget.isEditing ? widget.org!['ID'] : null,
                               nombre: _organizationNameController.text,
@@ -120,15 +133,16 @@ class _OrganizationCreationOrEditPageState
                               appScope: _organizationAppScopeController.text,
                               baseURL: _organizationAppUrlController.text);
                           try {
+                            int code = 0;
                             if (widget.isEditing) {
                               newOrg = await apiProvider
                                   .updateOrganization(organization);
                             } else {
-                              newOrg = await apiProvider
+                              code = await apiProvider
                                   .createOrganization(organization);
                             }
                             if (!context.mounted) return;
-                            if (newOrg.nombre != null) {
+                            if (newOrg?.nombre != null || code == 200) {
                               Navigator.pop(context, true);
                             } else {
                               showDialog(
@@ -198,67 +212,127 @@ class _OrganizationCreationOrEditPageState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        const Text(
-          'Organization Uipath Name',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Organization UiPath Name',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            Tooltip(
+              message:
+                  'Nombre de la organización en UiPath.\nBajo el navegador se encontrará la URL que menciona el nombre de organización,\nEjemplo:\nEn la URL https://cloud.uipath.com/my_organization/my_tenant/orchestrator_\nEl valor correcto seria: "my_organization"',
+              child: Icon(Icons.info_outline_rounded),
+            )
+          ],
         ),
         TextField(
           controller: _organizationUipathNameController,
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Organization Tenant Name',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Organization Tenant Name',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            Tooltip(
+              message:
+                  'Nombre del tenant de la organización en UiPath.\nBajo el navegador se encontrará la URL que menciona el nombre del tenant,\nEjemplo:\nEn la URL https://cloud.uipath.com/my_organization/my_tenant/orchestrator_\nEl valor correcto seria: "my_tenant"',
+              child: Icon(Icons.info_outline_rounded),
+            )
+          ],
         ),
         TextField(
           controller: _organizationTenantNameController,
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Organization App ID',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Organization App ID',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            Tooltip(
+              message:
+                  'ID de la aplicación registrada en UiPath.\nEjemplo: "my_app_id"',
+              child: Icon(Icons.info_outline_rounded),
+            )
+          ],
         ),
         TextField(
           controller: _organizationAppIdController,
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Organization App Secret',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Organization App Secret',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            Tooltip(
+              message:
+                  'Secreto de la aplicación registrada en UiPath.\nEjemplo: "my_app_secret"',
+              child: Icon(Icons.info_outline_rounded),
+            )
+          ],
         ),
         TextField(
           controller: _organizationAppSecretController,
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Organization App Scope',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Organization App Scope',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            Tooltip(
+              message:
+                  'Ámbito de la aplicación registrada en UiPath.\nLos valores minimos por defecto son: "OR.Monitoring OR.Folders OR.Execution OR.Jobs"',
+              child: Icon(Icons.info_outline_rounded),
+            )
+          ],
         ),
         TextField(
           controller: _organizationAppScopeController,
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Organization App URL',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Organization App URL',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            Tooltip(
+              message:
+                  'URL de la instancia de Orchestrator a la que se desea acceder.\nEjemplo: "https://cloud.uipath.com/"',
+              child: Icon(Icons.info_outline_rounded),
+            )
+          ],
         ),
         TextField(
           controller: _organizationAppUrlController,

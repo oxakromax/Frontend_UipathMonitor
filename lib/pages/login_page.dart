@@ -69,6 +69,8 @@ class _LoginPageState extends State<LoginPage> {
           prefs.remove('email');
           prefs.remove('password');
         }
+        Provider.of<GeneralProvider>(context, listen: false)
+            .setUserMap(_usuarioController.text, _passwordController.text);
         await Navigator.pushReplacementNamed(context, "/user/profile");
       } else {
         prefs.remove('password');

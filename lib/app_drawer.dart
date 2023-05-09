@@ -52,6 +52,14 @@ class AppDrawer extends StatelessWidget {
                 RouteNavigator(context, '/admin/users');
               },
             ),
+          if (isAuthorized(context, '/user/processes'))
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Gestión de procesos'),
+              onTap: () {
+                RouteNavigator(context, '/user/processes');
+              },
+            ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Cerrar sesión'),

@@ -53,100 +53,105 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil')),
-      drawer: AppDrawer(),
-      body: FutureBuilder<UserEntity?>(
-        future: futureProfile,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            UserEntity profile = snapshot.data!;
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EditProfilePage(profile: profile),
-                          ),
-                        ).then((_) {
-                          // Refresca el perfil cuando se regresa de la pantalla de edición
-                          setState(() {});
-                        });
-                      },
-                      child: ListTile(
-                        title: Text('${profile.nombre} ${profile.apellido}'),
-                        subtitle: Text(profile.email ?? ''),
-                        leading: CircleAvatar(
-                          child: Text(
-                            profile.nombre?[0].toUpperCase() ?? '',
-                            style: const TextStyle(fontSize: 22.0),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        trailing: const Icon(Icons.edit),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ExpansionTile(
-                      initiallyExpanded: true,
-                      title: const Text(
-                        'Roles',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      children: [
-                        for (UserRoles role in profile.roles ?? [])
-                          ListTile(
-                            title: Text(role.nombre ?? 'ERROR'),
-                            leading: const Icon(Icons.check_circle,
-                                color: Colors.green),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    ExpansionTile(
-                        title: const Text(
-                          "Procesos",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
+        appBar: AppBar(title: const Text('Perfil')),
+        drawer: AppDrawer(),
+        body: Consumer<GeneralProvider>(
+          builder: (context, provider, child) {
+            return FutureBuilder<UserEntity?>(
+              future: futureProfile,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  UserEntity profile = snapshot.data!;
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          for (UserOrganizaciones org
-                              in profile.organizaciones ?? [])
-                            ExpansionTile(
-                              title: Text(org.nombre ?? 'ERROR',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditProfilePage(profile: profile),
+                                ),
+                              ).then((_) {
+                                // Refresca el perfil cuando se regresa de la pantalla de edición
+                                setState(() {});
+                              });
+                            },
+                            child: ListTile(
+                              title:
+                                  Text('${profile.nombre} ${profile.apellido}'),
+                              subtitle: Text(profile.email ?? ''),
+                              leading: CircleAvatar(
+                                child: Text(
+                                  profile.nombre?[0].toUpperCase() ?? '',
+                                  style: const TextStyle(fontSize: 22.0),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              trailing: const Icon(Icons.edit),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ExpansionTile(
+                            initiallyExpanded: true,
+                            title: const Text(
+                              'Roles',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            children: [
+                              for (UserRoles role in profile.roles ?? [])
+                                ListTile(
+                                  title: Text(role.nombre ?? 'ERROR'),
+                                  leading: const Icon(Icons.check_circle,
+                                      color: Colors.green),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          ExpansionTile(
+                              title: const Text(
+                                "Procesos",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
                               children: [
-                                for (UserOrganizacionesProcesos proc
-                                    in org.procesos ?? [])
-                                  ListTile(
-                                    title: Text(proc.nombre ?? 'ERROR'),
-                                    leading: const Icon(Icons.check_circle,
-                                        color: Colors.green),
-                                  ),
-                              ],
-                            )
-                        ]),
-                  ],
-                ),
-              ),
+                                for (UserOrganizaciones org
+                                    in profile.organizaciones ?? [])
+                                  ExpansionTile(
+                                    title: Text(org.nombre ?? 'ERROR',
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold)),
+                                    children: [
+                                      for (UserOrganizacionesProcesos proc
+                                          in org.procesos ?? [])
+                                        ListTile(
+                                          title: Text(proc.nombre ?? 'ERROR'),
+                                          leading: const Icon(
+                                              Icons.check_circle,
+                                              color: Colors.green),
+                                        ),
+                                    ],
+                                  )
+                              ]),
+                        ],
+                      ),
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('${snapshot.error}'),
+                  );
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
             );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('${snapshot.error}'),
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
-      ),
-    );
+          },
+        ));
   }
 }
