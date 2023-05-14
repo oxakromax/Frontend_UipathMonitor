@@ -1,6 +1,5 @@
 import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
-import 'package:UipathMonitor/pages/User/incidentsUser/incident_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +23,9 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
   final _fatalEditController = TextEditingController();
   final _UserSearchController = TextEditingController();
   final _ClientSearchController = TextEditingController();
+  final _ScrollController = ScrollController();
+
+  var process = ProcessesEntity();
 
   var _ClientsNotAssigned = [];
   var _UsersNotAssigned = [];
@@ -31,11 +33,31 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
 
   List<ProcessesIncidentesProceso> _filteredIncidents = [];
 
+  List<ProcessesUsuarios> _selectedUsers = [];
+  List<ProcessesClientes> _selectedClients = [];
+
   @override
   void initState() {
     super.initState();
     _processFuture = Provider.of<ApiProvider>(context, listen: false)
         .GetProcess(widget.processID);
+  }
+
+  void RefreshScaffold(BuildContext context) {
+    // save scroll position
+    final position = _ScrollController.position;
+
+    setState(() {
+      _processFuture = Provider.of<ApiProvider>(context, listen: false)
+          .GetProcess(widget.processID);
+    });
+
+    Future.delayed(const Duration(milliseconds: 200)).then((_) {
+      // restore scroll position
+      if (context.mounted) {
+        _ScrollController.position.moveTo(position.pixels);
+      }
+    });
   }
 
   @override
@@ -68,7 +90,9 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               }).toList();
             }
 
-            return _buildProcessDetails(snapshot.data!, context);
+            process = snapshot.data!;
+
+            return _buildProcessDetails(context);
           }
           return const Center(child: CircularProgressIndicator());
         },
@@ -76,20 +100,21 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     );
   }
 
-  Widget _buildProcessDetails(ProcessesEntity process, BuildContext context) {
+  Widget _buildProcessDetails(BuildContext context) {
     // ... (aquí irían las funciones que faltan para construir la interfaz gráfica, como _buildIncidentsSummary, _buildUserAssignment, _buildClientAssignment y _buildHelpMenu)
 
     return SingleChildScrollView(
+      controller: _ScrollController,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProcessInfo(process, context),
+            _buildProcessInfo(context),
             if (process.incidentesProceso?.isNotEmpty ?? false)
-              _buildIncidentsSummary(process, context),
-            _buildUserAssignment(process, context),
-            _buildClientAssignment(process, context),
+              _buildIncidentsSummary(context),
+            _buildUserAssignment(context),
+            _buildClientAssignment(context),
             _buildHelpMenu(),
           ],
         ),
@@ -97,7 +122,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     );
   }
 
-  Widget _buildProcessInfo(ProcessesEntity process, BuildContext context) {
+  Widget _buildProcessInfo(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -301,7 +326,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     );
   }
 
-  Widget _buildIncidentsSummary(ProcessesEntity process, BuildContext context) {
+  Widget _buildIncidentsSummary(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -353,7 +378,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 ],
                 source: IncidentDataSource(context, process, _filteredIncidents,
                     () {
-                  setState(() {});
+                  RefreshScaffold(context);
                 }),
               ),
             )
@@ -398,7 +423,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     return formatter.format(parsedDate);
   }
 
-  Widget _buildUserAssignment(ProcessesEntity process, BuildContext context) {
+  Widget _buildUserAssignment(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -410,25 +435,45 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            for (final user in process.usuarios ?? [])
-              ListTile(
-                title: Text('${user.nombre} ${user.apellido}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.remove_circle, color: Colors.red),
-                  onPressed: () async {
-                    await _removeUserDialog(context, process, user)
-                        .then((value) => setState(() {}));
+            for (var user in process.usuarios ?? [])
+              CheckboxListTile(
+                  title: Text('${user.nombre} ${user.apellido}'),
+                  subtitle: Text(user.email),
+                  value: _selectedUsers.contains(user),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value != null && value) {
+                        _selectedUsers.add(user);
+                      } else {
+                        _selectedUsers.remove(user);
+                      }
+                    });
                   },
+                  secondary: Icon(Icons.person)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () async {
+                    await _addUserDialog(context, process);
+                    RefreshScaffold(context);
+                  },
+                  icon: const Icon(Icons.add_circle, color: Colors.green),
+                  label: const Text('Agregar usuario'),
                 ),
-              ),
-            TextButton.icon(
-              onPressed: () async {
-                await _addUserDialog(context, process).then((value) {
-                  setState(() {});
-                });
-              },
-              icon: const Icon(Icons.add_circle, color: Colors.green),
-              label: const Text('Agregar usuario'),
+                TextButton.icon(
+                  onPressed: () async {
+                    await _removeUserDialog(context, process, _selectedUsers);
+                    setState(() {
+                      _selectedUsers.clear();
+                    });
+                    RefreshScaffold(context);
+                  },
+                  icon: const Icon(Icons.remove_circle_outline,
+                      color: Colors.red),
+                  label: const Text('Eliminar seleccionados'),
+                ),
+              ],
             ),
           ],
         ),
@@ -436,7 +481,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     );
   }
 
-  Widget _buildClientAssignment(ProcessesEntity process, BuildContext context) {
+  Widget _buildClientAssignment(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -448,22 +493,46 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            for (final client in process.clientes ?? [])
-              ListTile(
-                title: Text('${client.nombre} ${client.apellido}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.remove_circle, color: Colors.red),
-                  onPressed: () {
-                    // Lógica para eliminar al cliente del proceso
+            for (var client in process.clientes ?? [])
+              CheckboxListTile(
+                  title: Text('${client.nombre} ${client.apellido}'),
+                  subtitle: Text(client.email),
+                  value: _selectedClients.contains(client),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value != null && value) {
+                        _selectedClients.add(client);
+                      } else {
+                        _selectedClients.remove(client);
+                      }
+                    });
                   },
+                  secondary: Icon(Icons.person)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () async {
+                    await _addClientDialog(context, process);
+                    RefreshScaffold(context);
+                  },
+                  icon: const Icon(Icons.add_circle, color: Colors.green),
+                  label: const Text('Agregar cliente'),
                 ),
-              ),
-            TextButton.icon(
-              onPressed: () {
-                // Lógica para mostrar un diálogo y agregar un cliente al proceso
-              },
-              icon: const Icon(Icons.add_circle, color: Colors.green),
-              label: const Text('Agregar cliente'),
+                TextButton.icon(
+                  onPressed: () async {
+                    await _removeClientDialog(
+                        context, process, _selectedClients);
+                    setState(() {
+                      _selectedClients.clear();
+                    });
+                    RefreshScaffold(context);
+                  },
+                  icon: const Icon(Icons.remove_circle_outline,
+                      color: Colors.red),
+                  label: const Text('Eliminar seleccionados'),
+                ),
+              ],
             ),
           ],
         ),
@@ -548,8 +617,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               child: const Text('Agregar'),
               onPressed: () async {
                 await Provider.of<ApiProvider>(context, listen: false)
-                    .addUsersToProcess(process.iD, selectedUsers)
-                    .then((value) => setState(() {}));
+                    .addUsersToProcess(process.iD, selectedUsers);
                 Navigator.of(context).pop();
               },
             ),
@@ -559,8 +627,16 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     );
   }
 
-  Future<void> _removeUserDialog(
-      BuildContext context, ProcessesEntity process, user) {
+  Future<void> _removeUserDialog(BuildContext context, ProcessesEntity process,
+      List<ProcessesUsuarios> users) async {
+    String message;
+    if (users.length == 1) {
+      message =
+          '¿Está seguro que desea eliminar a ${users[0].nombre} ${users[0].apellido} del proceso?';
+    } else {
+      message =
+          '¿Está seguro que desea eliminar a ${users.length} usuarios del proceso?';
+    }
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -569,8 +645,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('¿Está seguro que desea eliminar a ${user.nombre} '
-                    '${user.apellido} del proceso?'),
+                Text(message),
               ],
             ),
           ),
@@ -584,9 +659,116 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
             TextButton(
               child: const Text('Eliminar'),
               onPressed: () async {
+                for (final user in users) {
+                  await Provider.of<ApiProvider>(context, listen: false)
+                      .removeUserFromProcess(process.iD, user.iD);
+                }
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Same as above, but for clients
+  Future<void> _addClientDialog(
+      BuildContext context, ProcessesEntity process) async {
+    final List<ProcessesClientes>? clients =
+        await Provider.of<ApiProvider>(context, listen: false)
+            .getClientsPossibleForProcess(process.iD);
+    final List<ProcessesClientes> selectedClients = <ProcessesClientes>[];
+
+    if (!context.mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Agregar cliente'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    for (final ProcessesClientes client in clients ?? [])
+                      CheckboxListTile(
+                        title: Text('${client.nombre} ${client.apellido}'),
+                        value: selectedClients.contains(client),
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value != null && value) {
+                              selectedClients.add(client);
+                            } else {
+                              selectedClients.remove(client);
+                            }
+                          });
+                        },
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Agregar'),
+              onPressed: () async {
                 await Provider.of<ApiProvider>(context, listen: false)
-                    .removeUserFromProcess(process.iD, user.iD)
-                    .then((value) => setState(() {}));
+                    .addClientsToProcess(process.iD, selectedClients);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _removeClientDialog(BuildContext context,
+      ProcessesEntity process, List<ProcessesClientes> client) async {
+    String message;
+    if (client.length == 1) {
+      message =
+          '¿Está seguro que desea eliminar a ${client[0].nombre} ${client[0].apellido} del proceso?';
+    } else {
+      message =
+          '¿Está seguro que desea eliminar a ${client.length} clientes del proceso?';
+    }
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Eliminar cliente'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Eliminar'),
+              onPressed: () async {
+                for (final client in client) {
+                  await Provider.of<ApiProvider>(context, listen: false)
+                      .removeClientFromProcess(process.iD, client.iD);
+                }
                 if (!context.mounted) return;
                 Navigator.of(context).pop();
               },

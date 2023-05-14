@@ -288,4 +288,31 @@ class ApiProvider with ChangeNotifier {
             '$_baseUrl/user/processes/$iD/users?users_id=${selectedUsers.map((e) => e.iD).join(',')}'),
         headers: _standartHeader());
   }
+
+  Future<List<ProcessesClientes>?> getClientsPossibleForProcess(int? iD) {
+    // /user/processes/:id/possibleClients GET
+    return http
+        .get(Uri.parse('$_baseUrl/user/processes/$iD/possibleClients'),
+            headers: _standartHeader())
+        .then((value) => jsonDecode(value.body)
+            .map<ProcessesClientes>((x) => ProcessesClientes.fromJson(x))
+            .toList());
+  }
+
+  Future<Response> removeClientFromProcess(int? processID, clientID) {
+    // /user/processes/processID/clients?clients_id=clientID DELETE
+    return http.delete(
+        Uri.parse(
+            '$_baseUrl/user/processes/$processID/clients?clients_id=$clientID'),
+        headers: _standartHeader());
+  }
+
+  Future<Response> addClientsToProcess(
+      int? iD, List<ProcessesClientes> selectedClients) {
+    // /user/processes/processID/clients?clients_id=1,2,3 POST
+    return http.post(
+        Uri.parse(
+            '$_baseUrl/user/processes/$iD/clients?clients_id=${selectedClients.map((e) => e.iD).join(',')}'),
+        headers: _standartHeader());
+  }
 }
