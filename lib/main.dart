@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:UipathMonitor/pages/Admin/Organization/OrganizationListPage.dart';
-import 'package:UipathMonitor/pages/Admin/Processes/processes_list_page.dart';
 import 'package:UipathMonitor/pages/Admin/Users/UsersListPage.dart';
+import 'package:UipathMonitor/pages/Dual/Processes/processes_list_page.dart';
 import 'package:UipathMonitor/pages/ForgotPasswordPage.dart';
 import 'package:UipathMonitor/pages/User/ProfilePage.dart';
 import 'package:UipathMonitor/pages/User/incidentsUser/incident_management_page.dart';

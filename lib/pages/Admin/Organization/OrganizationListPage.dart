@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Providers/ApiProvider.dart';
-import '../../../models/organization.dart';
+import '../../../classes/organization_entity.dart';
 
 class OrganizationListScreen extends StatefulWidget {
   @override

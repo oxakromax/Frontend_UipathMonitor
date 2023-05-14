@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:UipathMonitor/classes/user_entity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
-import '../models/organization.dart';
+import '../classes/organization_entity.dart';
 
 class ApiProvider with ChangeNotifier {
   final String _baseUrl;
@@ -144,7 +146,7 @@ class ApiProvider with ChangeNotifier {
   Future<void> deleteOrganizationClient(dynamic cliente) async {
     // DELETE "/admin/organization/client"
     // cliente is a map with all data of the client, send it as json body
-    final request = await http.Request(
+    final request = http.Request(
         'DELETE', Uri.parse('$_baseUrl/admin/organization/client'));
     request.body = json.encode(cliente);
     request.headers.addAll(_standartHeader());
@@ -163,8 +165,8 @@ class ApiProvider with ChangeNotifier {
     //   "new_users": [2, 3],
     //   "delete_users": [4, 5]
     // }
-    final request = await http.Request(
-        'PUT', Uri.parse('$_baseUrl/admin/organization/user'));
+    final request =
+        http.Request('PUT', Uri.parse('$_baseUrl/admin/organization/user'));
     request.body = json.encode(
         {"org_id": orgID, "new_users": newUsers, "delete_users": deleteUsers});
     request.headers.addAll(_standartHeader());
@@ -175,8 +177,7 @@ class ApiProvider with ChangeNotifier {
   }
 
   Future addUser(Map<String, dynamic> json) async {
-    final request =
-        await http.Request('POST', Uri.parse('$_baseUrl/admin/users'));
+    final request = http.Request('POST', Uri.parse('$_baseUrl/admin/users'));
     request.body = jsonEncode(json);
     request.headers.addAll(_standartHeader());
     final response = await request.send();
@@ -187,7 +188,7 @@ class ApiProvider with ChangeNotifier {
 
   Future deleteUser(int? iD) async {
     final request =
-        await http.Request('DELETE', Uri.parse('$_baseUrl/admin/users?id=$iD'));
+        http.Request('DELETE', Uri.parse('$_baseUrl/admin/users?id=$iD'));
     request.headers.addAll(_standartHeader());
     final response = await request.send();
     if (response.statusCode != 200) {
@@ -196,8 +197,8 @@ class ApiProvider with ChangeNotifier {
   }
 
   Future editUser(UserEntity user) async {
-    final request = await http.Request(
-        'PUT', Uri.parse('$_baseUrl/admin/users?id=${user.iD}'));
+    final request =
+        http.Request('PUT', Uri.parse('$_baseUrl/admin/users?id=${user.iD}'));
     request.body = jsonEncode(user.toJson());
     request.headers.addAll(_standartHeader());
     final response = await request.send();
@@ -209,7 +210,7 @@ class ApiProvider with ChangeNotifier {
   Future<List<UserRoles>> GetAllUserRoles() async {
     // /admin/users/roles GET
     final request =
-        await http.Request('GET', Uri.parse('$_baseUrl/admin/users/roles'));
+        http.Request('GET', Uri.parse('$_baseUrl/admin/users/roles'));
     request.headers.addAll(_standartHeader());
     final response = await request.send();
     if (response.statusCode != 200) {
@@ -222,13 +223,69 @@ class ApiProvider with ChangeNotifier {
 
   Future<dynamic> GetProcesses() async {
     // /admin/processes GET
-    final request =
-        await http.Request('GET', Uri.parse('$_baseUrl/user/processes'));
+    final request = http.Request('GET', Uri.parse('$_baseUrl/user/processes'));
     request.headers.addAll(_standartHeader());
     final response = await request.send();
     if (response.statusCode != 200) {
       throw Exception('Failed to get processes');
     }
     return jsonDecode(await response.stream.bytesToString());
+  }
+
+  Future<ProcessesEntity> GetProcess(int id) async {
+    // /admin/processes GET
+    final request =
+        http.Request('GET', Uri.parse('$_baseUrl/user/processes/$id'));
+    request.headers.addAll(_standartHeader());
+    final response = await request.send();
+    if (response.statusCode != 200) {
+      throw Exception('Failed to get process');
+    }
+    return ProcessesEntity.fromJson(
+        jsonDecode(await response.stream.bytesToString()));
+  }
+
+  Future<bool> UpdateProcess(ProcessesEntity process) async {
+    // /admin/processes PUT
+    final request = http.Request(
+        'PUT', Uri.parse('$_baseUrl/user/processes/${process.iD}'));
+    request.body = jsonEncode(process.toJson());
+    request.headers.addAll(_standartHeader());
+    final response = await request.send();
+    if (response.statusCode != 200) {
+      String msg = await response.stream.bytesToString();
+      throw Exception('Failed to update process: ${response.statusCode}\n$msg');
+    }
+    return true;
+  }
+
+  Future<List<ProcessesUsuarios>?> getUsersPossibleForProcess(int? iD) async {
+    // /user/processes/:id/possibleUsers GET
+    final request = http.Request(
+        'GET', Uri.parse('$_baseUrl/user/processes/$iD/possibleUsers'));
+    request.headers.addAll(_standartHeader());
+    final response = await request.send();
+    if (response.statusCode != 200) {
+      throw Exception('Failed to get users possible for process');
+    }
+    return jsonDecode(await response.stream.bytesToString())
+        .map<ProcessesUsuarios>((x) => ProcessesUsuarios.fromJson(x))
+        .toList();
+  }
+
+  Future<Response> removeUserFromProcess(int? processID, userID) {
+    // /user/processes/processID/users?users_id=userID DELETE
+    return http.delete(
+        Uri.parse('$_baseUrl/user/processes/$processID/users?users_id=$userID'),
+        headers: _standartHeader());
+  }
+
+  Future<Response> addUsersToProcess(
+      int? iD, List<ProcessesUsuarios> selectedUsers) {
+    // /user/processes/processID/users?users_id=1,2,3 POST
+    return http.post(
+        Uri.parse(
+            '$_baseUrl/user/processes/$iD/users?users_id=${selectedUsers.map((e) => e.iD).join(',')}'),
+        headers: _standartHeader());
   }
 }

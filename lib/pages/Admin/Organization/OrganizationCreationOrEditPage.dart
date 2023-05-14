@@ -1,4 +1,4 @@
-import 'package:UipathMonitor/models/organization.dart';
+import 'package:UipathMonitor/classes/organization_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

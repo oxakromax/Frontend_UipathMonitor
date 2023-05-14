@@ -1,4 +1,5 @@
 import 'package:UipathMonitor/Providers/ApiProvider.dart';
+import 'package:UipathMonitor/pages/Dual/Processes/processes_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -95,6 +96,7 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                           final folderName = process['Foldername'];
                           final organizationName =
                               process['Organizacion']['Nombre'];
+                          final ProcessID = process['ID'];
 
                           return ListTile(
                             title: Text(processName),
@@ -103,7 +105,14 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                             trailing: IconButton(
                               icon: Icon(Icons.edit),
                               onPressed: () {
-                                // TODO Edit Process
+                                // Navegar a la pantalla de creación/edición de organizaciones: ProcessesViewPage
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) {
+                                    return ProcessesViewPage(
+                                      processID: ProcessID,
+                                    );
+                                  },
+                                ));
                               },
                             ),
                           );

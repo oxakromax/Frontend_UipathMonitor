@@ -157,15 +157,18 @@ ProcessesOrganizacion $ProcessesOrganizacionFromJson(
   if (baseURL != null) {
     processesOrganizacion.baseURL = baseURL;
   }
-  final dynamic clientes = jsonConvert.convert<dynamic>(json['Clientes']);
+  final dynamic clientes =
+      jsonConvert.convert<ProcessesClientes>(json['Clientes']);
   if (clientes != null) {
     processesOrganizacion.clientes = clientes;
   }
-  final dynamic procesos = jsonConvert.convert<dynamic>(json['Procesos']);
+  final dynamic procesos =
+      jsonConvert.convert<ProcessesEntity>(json['Procesos']);
   if (procesos != null) {
     processesOrganizacion.procesos = procesos;
   }
-  final dynamic usuarios = jsonConvert.convert<dynamic>(json['Usuarios']);
+  final dynamic usuarios =
+      jsonConvert.convert<ProcessesUsuarios>(json['Usuarios']);
   if (usuarios != null) {
     processesOrganizacion.usuarios = usuarios;
   }

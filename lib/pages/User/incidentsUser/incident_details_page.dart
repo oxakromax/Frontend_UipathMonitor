@@ -181,7 +181,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Usuario(s)', // Clientes
+                child: Text('Cliente(s)', // Clientes
                     style: Theme.of(context).textTheme.headline6),
               ),
               ListView.builder(

@@ -120,11 +120,11 @@ class ProcessesOrganizacion {
   @JSONField(name: "BaseURL")
   String? baseURL;
   @JSONField(name: "Clientes")
-  dynamic clientes;
+  List<ProcessesClientes>? clientes;
   @JSONField(name: "Procesos")
-  dynamic procesos;
+  List<ProcessesEntity>? procesos;
   @JSONField(name: "Usuarios")
-  dynamic usuarios;
+  List<ProcessesUsuarios>? usuarios;
 
   ProcessesOrganizacion();
 
@@ -145,9 +145,9 @@ class ProcessesOrganizacion {
       String? appSecret,
       String? appScope,
       String? baseURL,
-      dynamic clientes,
-      dynamic procesos,
-      dynamic usuarios}) {
+      List<ProcessesClientes>? clientes,
+      List<ProcessesEntity>? procesos,
+      List<ProcessesUsuarios>? usuarios}) {
     return ProcessesOrganizacion()
       ..iD = iD ?? this.iD
       ..createdAt = createdAt ?? this.createdAt
