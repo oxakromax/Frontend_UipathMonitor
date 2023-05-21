@@ -17,28 +17,11 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late Future<UserEntity?> futureProfile;
 
-  Future<UserEntity?> fetchProfile() async {
-    final response = await http.get(
-      Uri.parse(
-          '${Provider.of<GeneralProvider>(context, listen: false).url}/user/profile'),
-      headers: {
-        'Authorization':
-            'Bearer ${Provider.of<GeneralProvider>(context, listen: false).token}'
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var profileData = jsonDecode(response.body);
-      return UserEntity.fromJson(profileData);
-    } else {
-      throw Exception('Error al obtener el perfil');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    futureProfile = fetchProfile();
+    futureProfile =
+        Provider.of<GeneralProvider>(context, listen: false).fetchProfile();
     futureProfile.then((value) => {
           if (value == null)
             {Navigator.pushReplacementNamed(context, "/login")}
@@ -53,105 +36,142 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Perfil')),
-        drawer: AppDrawer(),
-        body: Consumer<GeneralProvider>(
-          builder: (context, provider, child) {
-            return FutureBuilder<UserEntity?>(
-              future: futureProfile,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  UserEntity profile = snapshot.data!;
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditProfilePage(profile: profile),
-                                ),
-                              ).then((_) {
-                                // Refresca el perfil cuando se regresa de la pantalla de edición
-                                setState(() {});
-                              });
-                            },
-                            child: ListTile(
-                              title:
-                                  Text('${profile.nombre} ${profile.apellido}'),
-                              subtitle: Text(profile.email ?? ''),
-                              leading: CircleAvatar(
-                                child: Text(
-                                  profile.nombre?[0].toUpperCase() ?? '',
-                                  style: const TextStyle(fontSize: 22.0),
-                                  textAlign: TextAlign.center,
-                                ),
+      appBar: AppBar(
+        title: const Text('Perfil'),
+      ),
+      drawer: AppDrawer(),
+      body: Consumer<GeneralProvider>(
+        builder: (context, provider, child) {
+          return FutureBuilder<UserEntity?>(
+            future: futureProfile,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                UserEntity profile = snapshot.data!;
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditProfilePage(profile: profile),
                               ),
-                              trailing: const Icon(Icons.edit),
+                            ).then((_) {
+                              // Refresh the profile when returning from the edit screen
+                              setState(() {});
+                            });
+                          },
+                          child: ListTile(
+                            title: Text(
+                              '${profile.nombre} ${profile.apellido}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                            subtitle: Text(
+                              profile.email ?? '',
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            leading: CircleAvatar(
+                              child: Text(
+                                profile.nombre?[0].toUpperCase() ?? '',
+                                style: const TextStyle(
+                                  fontSize: 22.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            trailing: const Icon(Icons.edit),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ExpansionTile(
+                          initiallyExpanded: true,
+                          title: const Text(
+                            'Roles',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          ExpansionTile(
-                            initiallyExpanded: true,
-                            title: const Text(
-                              'Roles',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            children: [
-                              for (UserRoles role in profile.roles ?? [])
-                                ListTile(
-                                  title: Text(role.nombre ?? 'ERROR'),
-                                  leading: const Icon(Icons.check_circle,
-                                      color: Colors.green),
+                          children: [
+                            for (UserRoles role in profile.roles ?? [])
+                              ListTile(
+                                title: Text(
+                                  role.nombre ?? 'ERROR',
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                  ),
                                 ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          ExpansionTile(
-                              title: const Text(
-                                "Procesos",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                leading: const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                ),
                               ),
-                              children: [
-                                for (UserOrganizaciones org
-                                    in profile.organizaciones ?? [])
-                                  ExpansionTile(
-                                    title: Text(org.nombre ?? 'ERROR',
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        ExpansionTile(
+                          title: const Text(
+                            "Procesos",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          children: [
+                            for (UserOrganizaciones org
+                                in profile.organizaciones ?? [])
+                              ExpansionTile(
+                                title: Text(
+                                  org.nombre ?? 'ERROR',
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                children: [
+                                  for (UserOrganizacionesProcesos proc
+                                      in org.procesos ?? [])
+                                    ListTile(
+                                      title: Text(
+                                        proc.nombre ?? 'ERROR',
                                         style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold)),
-                                    children: [
-                                      for (UserOrganizacionesProcesos proc
-                                          in org.procesos ?? [])
-                                        ListTile(
-                                          title: Text(proc.nombre ?? 'ERROR'),
-                                          leading: const Icon(
-                                              Icons.check_circle,
-                                              color: Colors.green),
+                                          fontSize: 16.0,
                                         ),
-                                    ],
-                                  )
-                              ]),
-                        ],
-                      ),
+                                      ),
+                                      leading: const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                ],
+                              )
+                          ],
+                        ),
+                      ],
                     ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text('${snapshot.error}'),
-                  );
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
-            );
-          },
-        ));
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text('${snapshot.error}'),
+                );
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
+          );
+        },
+      ),
+    );
   }
 }

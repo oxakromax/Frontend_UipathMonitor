@@ -1,5 +1,6 @@
 import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/Providers/GeneralProvider.dart';
+import 'package:UipathMonitor/app_drawer.dart';
 import 'package:UipathMonitor/classes/user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,7 @@ class _UsersListPageState extends State<UsersListPage> {
   Widget build(BuildContext context) {
     var _ApiProvider = Provider.of<ApiProvider>(context, listen: false);
     return Scaffold(
+      drawer: AppDrawer(),
       appBar: AppBar(
         title: const Text('Usuarios'),
         centerTitle: true,
@@ -128,7 +130,7 @@ class _UsersListPageState extends State<UsersListPage> {
           });
         },
       ),
-      title: Text(user.nombre ?? ''),
+      title: Text('${user.nombre} ${user.apellido}'),
       subtitle: Text(user.email ?? ''),
       trailing: // Edit button
           Row(
@@ -153,11 +155,6 @@ class _UsersListPageState extends State<UsersListPage> {
           ),
         ],
       ),
-      // onTap: () {
-      //   // Implementa aquí el diálogo de edición del usuario.
-      //   // Por ejemplo, puedes llamar a la función editUserDialog (que aún no has creado) de la siguiente manera:
-      //   // editUserDialog(context, user);
-      // },
     );
   }
 

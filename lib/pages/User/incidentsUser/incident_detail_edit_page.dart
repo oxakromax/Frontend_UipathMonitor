@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -29,52 +30,6 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
   final DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
 
-  Future<void> postIncidentDetails({
-    required BuildContext context,
-    required int incidentId,
-    required String details,
-    required DateTime startDate,
-    required DateTime endDate,
-    required int status,
-  }) async {
-    // Crea una solicitud de tipo multipart
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse(
-          '${Provider.of<GeneralProvider>(context, listen: false).url}/user/incidents/details'),
-    );
-
-    // Agrega los encabezados necesarios
-    request.headers.addAll({
-      'Authorization':
-          'Bearer ${Provider.of<GeneralProvider>(context, listen: false).token}',
-    });
-
-    // Agrega los campos de texto al formulario
-    request.fields.addAll({
-      'incidentID': incidentId.toString(),
-      'details': details,
-      'fechaInicio': DateFormat('yyyy-MM-dd HH:mm:ss').format(_startDate),
-      'fechaFin': DateFormat('yyyy-MM-dd HH:mm:ss').format(_endDate),
-      'estado': status.toString(),
-    });
-
-    // Enviar la solicitud y obtener la respuesta
-    final response = await http.Response.fromStream(await request.send());
-
-    if (response.statusCode == 200) {
-      ProcessesIncidentesProceso updatedIncident =
-          ProcessesIncidentesProceso.fromJson(jsonDecode(response.body));
-      await ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Se ha guardado el progreso'),
-        duration: Duration(seconds: 2),
-      ));
-      Navigator.pop(context, updatedIncident);
-    } else {
-      throw Exception('Error al guardar los detalles del incidente');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -95,7 +50,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
     _timer = Timer.periodic(const Duration(hours: 4), (timer) {
       _endDate = DateTime.now();
       if (_isConnected) {
-        postIncidentDetails(
+        Provider.of<ApiProvider>(context, listen: false).PostIncidentDetails(
           context: context,
           incidentId: widget.incident.iD!,
           details: _detailsController.text,
@@ -250,9 +205,12 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
                     );
                   },
                 );
-
+                var updatedIncident;
                 if (result == true) {
-                  await postIncidentDetails(
+                  _endDate = DateTime.now();
+                  updatedIncident =
+                      await Provider.of<ApiProvider>(context, listen: false)
+                          .PostIncidentDetails(
                     context: context,
                     incidentId: widget.incident.iD!,
                     details: _detailsController.text,
@@ -260,7 +218,13 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
                     endDate: _endDate,
                     status: _Status,
                   );
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Se ha guardado el progreso'),
+                    duration: Duration(seconds: 2),
+                  ));
                 }
+
+                Navigator.pop(context, updatedIncident);
               },
               child: const Text('Guardar cambios'),
               style: ElevatedButton.styleFrom(

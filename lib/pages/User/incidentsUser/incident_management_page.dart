@@ -64,6 +64,38 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
             ],
           ),
         ),
+        floatingActionButton: // Refresh button
+            FloatingActionButton(
+          onPressed: () async {
+            // Dialog to wait
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const AlertDialog(
+                    content: SizedBox(
+                      height: 100,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  );
+                });
+            // Update incidents
+            updateIncidents();
+            futureIncidents.then((value) => {
+                  // Close dialog
+                  Navigator.pop(context),
+                  // Show snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Incidentes actualizados'),
+                    ),
+                  )
+                });
+          },
+          child: const Icon(Icons.refresh),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: FutureBuilder<IncidentsEntity>(
           future: futureIncidents,
           builder: (context, snapshot) {
@@ -109,7 +141,9 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
               const SizedBox(width: 10),
               Expanded(
                   child: Text(
-                incident.nombre ?? "",
+                // if alias is empty, use name, else use alias with name in parenthesis. dont show the parentesis if alias is empty
+                '${incident.alias?.isNotEmpty == true ? incident.alias : incident.nombre}${incident.alias?.isNotEmpty == true ? ' (${incident.nombre})' : ''}',
+
                 overflow: TextOverflow.ellipsis,
               ))
             ],
@@ -119,7 +153,8 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
             const SizedBox(width: 10),
             Expanded(
                 child: Text(
-              incident.organizacion?.nombre ?? "",
+              '${incident.organizacion?.nombre}/'
+              '${incident.foldername}',
               style: const TextStyle(
                 color: Colors.grey,
               ),

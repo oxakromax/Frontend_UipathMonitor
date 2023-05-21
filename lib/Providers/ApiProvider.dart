@@ -5,6 +5,7 @@ import 'package:UipathMonitor/classes/user_entity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 
 import '../classes/organization_entity.dart';
 
@@ -314,5 +315,50 @@ class ApiProvider with ChangeNotifier {
         Uri.parse(
             '$_baseUrl/user/processes/$iD/clients?clients_id=${selectedClients.map((e) => e.iD).join(',')}'),
         headers: _standartHeader());
+  }
+
+  Future<ProcessesIncidentesProceso> PostIncidentDetails({
+    required BuildContext context,
+    required int incidentId,
+    required String details,
+    required DateTime startDate,
+    required DateTime endDate,
+    required int status,
+  }) async {
+    // Crea una solicitud de tipo multipart
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$_baseUrl/user/incidents/details'),
+    );
+
+    // Agrega los encabezados necesarios
+    request.headers.addAll(_standartHeader());
+
+    // Agrega los campos de texto al formulario
+    request.fields.addAll({
+      'incidentID': incidentId.toString(),
+      'details': details,
+      'fechaInicio': DateFormat('yyyy-MM-dd HH:mm:ss').format(startDate),
+      'fechaFin': DateFormat('yyyy-MM-dd HH:mm:ss').format(endDate),
+      'estado': status.toString(),
+    });
+
+    // Enviar la solicitud y obtener la respuesta
+    final response = await http.Response.fromStream(await request.send());
+
+    if (response.statusCode == 200) {
+      return ProcessesIncidentesProceso.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al guardar los detalles del incidente');
+    }
+  }
+
+  Future<Response> addNewIncident(ProcessesIncidentesProceso incidente) {
+    // /user/processes/:id/newIncident
+    return http.post(
+        Uri.parse(
+            '$_baseUrl/user/processes/${incidente.procesoID}/newIncident'),
+        headers: _standartHeader(),
+        body: jsonEncode(incidente.toJson()));
   }
 }

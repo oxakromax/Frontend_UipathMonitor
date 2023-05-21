@@ -34,12 +34,15 @@ class _LoginPageState extends State<LoginPage> {
     _loadCredentials();
   }
 
-  Future<void> _loadCredentials() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _usuarioController.text = prefs.getString('email') ?? '';
-      _passwordController.text = prefs.getString('password') ?? '';
-      _rememberMe = prefs.containsKey('email') && prefs.containsKey('password');
+  void _loadCredentials() {
+    Future<SharedPreferences> value = SharedPreferences.getInstance();
+    value.then((prefs) {
+      setState(() {
+        _usuarioController.text = prefs.getString('email') ?? '';
+        _passwordController.text = prefs.getString('password') ?? '';
+        _rememberMe =
+            prefs.containsKey('email') && prefs.containsKey('password');
+      });
     });
   }
 
@@ -71,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
         }
         Provider.of<GeneralProvider>(context, listen: false)
             .setUserMap(_usuarioController.text, _passwordController.text);
-        await Navigator.pushReplacementNamed(context, "/user/profile");
+        Navigator.pushReplacementNamed(context, "/user/profile");
       } else {
         prefs.remove('password');
         showDialog(

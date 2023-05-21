@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GeneralProvider with ChangeNotifier {
   String _token = '';
   List<UserRolesRutas> _rutas = [];
+  List<UserRoles> _roles = [];
   UserEntity? _user;
   final String _url;
 
@@ -33,7 +34,17 @@ class GeneralProvider with ChangeNotifier {
     return _rutas.any((element) => element.route == ruta);
   }
 
+  bool HasRole(String role) {
+    return _roles
+        .any((element) => element.nombre == role || element.nombre == 'admin');
+  }
+
+  bool HasProcess(int id) {
+    return _user?.procesos?.any((element) => element.iD == id) ?? false;
+  }
+
   void StartTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       // Check first to "/pingAuth" if the user is logged in, if response is 200 is logged, if is 401 is not logged
       // if not logged, try to login, if login is success, set the token, if not cancel the timer
@@ -65,6 +76,11 @@ class GeneralProvider with ChangeNotifier {
         var responseString = await response.stream.bytesToString();
         var jsonResponse = jsonDecode(responseString);
         setToken(jsonResponse['token']);
+        // refresh User
+        var user = await fetchProfile();
+        if (user != null) {
+          setUser(user);
+        }
       } else if // connection refused or internet connection lost
           (response.statusCode == 401) {
         return;
@@ -86,6 +102,7 @@ class GeneralProvider with ChangeNotifier {
       element.rutas?.forEach((ruta) {
         _rutas.add(ruta);
       });
+      _roles.add(element);
     });
     notifyListeners();
   }
@@ -97,7 +114,22 @@ class GeneralProvider with ChangeNotifier {
 
   void logout(BuildContext context) {
     setToken('');
+    _user = null;
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+  }
+
+  Future<UserEntity?> fetchProfile() async {
+    final response = await http.get(
+      Uri.parse('${url}/user/profile'),
+      headers: {'Authorization': 'Bearer ${token}'},
+    );
+
+    if (response.statusCode == 200) {
+      var profileData = jsonDecode(response.body);
+      return UserEntity.fromJson(profileData);
+    } else {
+      throw Exception('Error al obtener el perfil');
+    }
   }
 
   Future<void> saveLocalProgress(Map<String, Object?> incident) async {

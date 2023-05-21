@@ -121,11 +121,18 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
               ),
               ListTile(
                 title: const Text('Tipo'),
+                // widget.incident.tipo
+                //     "Incidente": 1,
+                // "Mejora": 2,
+                // "Mantenimiento": 3,
+                // "Otro": 4,
                 subtitle: Text(widget.incident.tipo == 1
-                    ? "Incidente"
-                    : widget.incident.tipo == 2
-                        ? "Mantenimiento"
-                        : "Requerimiento"),
+                    ? 'Incidente'
+                    : (widget.incident.tipo == 2)
+                        ? 'Mejora'
+                        : (widget.incident.tipo == 3)
+                            ? 'Mantenimiento'
+                            : 'Otro'),
               ),
               ListTile(
                 title: const Text('Estado'),

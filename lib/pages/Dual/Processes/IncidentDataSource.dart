@@ -37,6 +37,21 @@ class IncidentDataSource extends DataTableSource {
     }
   }
 
+  String _getIncidentTipoText(int tipo) {
+    switch (tipo) {
+      case 1:
+        return 'Incidente';
+      case 2:
+        return 'Mejora';
+      case 3:
+        return 'Mantenimiento';
+      case 4:
+        return 'Otro';
+      default:
+        return 'Desconocido';
+    }
+  }
+
   String _formatDate(String date) {
     final parsedDate = DateTime.tryParse(date);
     if (parsedDate == null) {
@@ -62,6 +77,7 @@ class IncidentDataSource extends DataTableSource {
             Text(_getIncidentStateText(incident.estado ?? 0)),
           ],
         )),
+        DataCell(Text(_getIncidentTipoText(incident.tipo ?? 0))),
         DataCell(Text(_formatDate(incident.createdAt ?? ""))),
         DataCell(
           Container(
