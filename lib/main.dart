@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:UipathMonitor/pages/Admin/Organization/OrganizationListPage.dart';
 import 'package:UipathMonitor/pages/Admin/Users/UsersListPage.dart';
 import 'package:UipathMonitor/pages/Dual/Processes/processes_list_page.dart';
@@ -20,18 +18,18 @@ void main() {
         ChangeNotifierProvider(
             create: (context) =>
                 // GeneralProvider("https://golanguipathmonitortunnel.loca.lt")),
-                GeneralProvider("http://127.0.0.1:8080")),
+                GeneralProvider("http://localhost:8080")),
         // Utiliza ChangeNotifierProxyProvider para actualizar ApiProvider cuando GeneralProvider cambie
         ChangeNotifierProxyProvider<GeneralProvider, ApiProvider>(
           // create: (context) => ApiProvider("https://golanguipathmonitortunnel.loca.lt", ""),
-          create: (context) => ApiProvider("http://127.0.0.1:8080", ""),
+          create: (context) => ApiProvider("http://localhost:8080", ""),
           update: (context, generalProvider, apiProvider) {
             apiProvider?.updateToken(generalProvider.token);
             return apiProvider!;
           },
         ),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -41,16 +39,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var generalProvider = Provider.of<GeneralProvider>(context);
     return MaterialApp(
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginPage(key: Key('login')),
-        '/user/profile': (context) => ProfilePage(),
+        '/user/profile': (context) => generalProvider.token == ""
+            ? const LoginPage(key: Key('login'))
+            : ProfilePage(),
         '/user/incidents': (context) => const IncidentManagementPage(),
         '/forgot': (context) => ForgotPasswordPage(),
         '/admin/organization': (context) => OrganizationListScreen(),
-        '/admin/users': (context) => UsersListPage(),
-        '/user/processes': (context) => ProcessesListPage(),
+        '/admin/users': (context) => const UsersListPage(),
+        '/user/processes': (context) => const ProcessesListPage(),
       },
     );
   }
