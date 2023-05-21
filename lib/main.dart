@@ -1,27 +1,24 @@
-import 'package:UipathMonitor/pages/Admin/Organization/OrganizationListPage.dart';
-import 'package:UipathMonitor/pages/Admin/Users/UsersListPage.dart';
-import 'package:UipathMonitor/pages/Dual/Processes/processes_list_page.dart';
-import 'package:UipathMonitor/pages/ForgotPasswordPage.dart';
-import 'package:UipathMonitor/pages/User/ProfilePage.dart';
-import 'package:UipathMonitor/pages/User/incidentsUser/incident_management_page.dart';
-import 'package:UipathMonitor/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'Providers/ApiProvider.dart';
 import 'Providers/GeneralProvider.dart';
+import 'pages/Admin/Organization/OrganizationListPage.dart';
+import 'pages/Admin/Users/UsersListPage.dart';
+import 'pages/Dual/Processes/processes_list_page.dart';
+import 'pages/ForgotPasswordPage.dart';
+import 'pages/User/ProfilePage.dart';
+import 'pages/User/incidentsUser/incident_management_page.dart';
+import 'pages/login_page.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (context) =>
-                // GeneralProvider("https://golanguipathmonitortunnel.loca.lt")),
-                GeneralProvider("http://localhost:8080")),
-        // Utiliza ChangeNotifierProxyProvider para actualizar ApiProvider cuando GeneralProvider cambie
+          create: (context) => GeneralProvider("http://localhost:8080"),
+        ),
         ChangeNotifierProxyProvider<GeneralProvider, ApiProvider>(
-          // create: (context) => ApiProvider("https://golanguipathmonitortunnel.loca.lt", ""),
           create: (context) => ApiProvider("http://localhost:8080", ""),
           update: (context, generalProvider, apiProvider) {
             apiProvider?.updateToken(generalProvider.token);
@@ -35,7 +32,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +49,15 @@ class MyApp extends StatelessWidget {
         '/admin/organization': (context) => OrganizationListScreen(),
         '/admin/users': (context) => const UsersListPage(),
         '/user/processes': (context) => const ProcessesListPage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/user/profile') {
+          return MaterialPageRoute(
+            builder: (context) => ProfilePage(),
+            fullscreenDialog: true,
+          );
+        }
+        return null;
       },
     );
   }
