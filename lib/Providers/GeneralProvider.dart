@@ -114,8 +114,13 @@ class GeneralProvider with ChangeNotifier {
 
   void logout(BuildContext context) {
     setToken('');
+    _timer?.cancel();
     _user = null;
-    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    _rutas = [];
+    _roles = [];
+    _userMap['user'] = '';
+    _userMap['pass'] = '';
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
   Future<UserEntity?> fetchProfile() async {

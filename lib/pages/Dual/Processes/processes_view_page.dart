@@ -1,6 +1,5 @@
 import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/Providers/GeneralProvider.dart';
-import 'package:UipathMonitor/Providers/GeneralProvider.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:UipathMonitor/pages/Dual/Processes/processes_add_incident.dart';
 import 'package:flutter/material.dart';
@@ -24,15 +23,17 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
   final _warningEditController = TextEditingController();
   final _errorEditController = TextEditingController();
   final _fatalEditController = TextEditingController();
+  final _AliasEditController = TextEditingController();
   final _UserSearchController = TextEditingController();
   final _ClientSearchController = TextEditingController();
   final _ScrollController = ScrollController();
+  final _DataTableScrollController = ScrollController();
 
   var process = ProcessesEntity();
 
   var _ClientsNotAssigned = [];
   var _UsersNotAssigned = [];
-  var _EditTolerance = false;
+  var _Editting = false;
 
   List<ProcessesIncidentesProceso> _filteredIncidents = [];
 
@@ -96,6 +97,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 '${snapshot.data?.errorTolerance ?? ''}';
             _fatalEditController.text =
                 '${snapshot.data?.fatalTolerance ?? ''}';
+            _AliasEditController.text = '${snapshot.data?.alias ?? ''}';
             _filteredIncidents = snapshot.data?.incidentesProceso ?? [];
             if (_incidentSearchController.text.isNotEmpty) {
               // Filter the incidents based on the search input
@@ -170,18 +172,19 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 const SizedBox(width: 8),
                 // Botón para editar la organización
                 IconButton(
-                  icon: _EditTolerance
+                  icon: _Editting
                       ? const Icon(Icons.save)
                       : const Icon(Icons.edit_outlined),
                   onPressed: () async {
-                    _EditTolerance = !_EditTolerance;
-                    if (!_EditTolerance) {
+                    _Editting = !_Editting;
+                    if (!_Editting) {
                       process.warningTolerance =
                           int.tryParse(_warningEditController.text);
                       process.errorTolerance =
                           int.tryParse(_errorEditController.text);
                       process.fatalTolerance =
                           int.tryParse(_fatalEditController.text);
+                      process.alias = _AliasEditController.text;
                       try {
                         showDialog(
                           context: context,
@@ -225,6 +228,25 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               '${process.nombre ?? ''}${process.alias != "" ? ' (${process.alias})' : ''}',
               // style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            if (_Editting)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  Text("Alias", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  // Box to edit the process alias
+                  SizedBox(
+                    width: 300,
+                    child: TextFormField(
+                      controller: _AliasEditController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             const SizedBox(height: 8),
             // FolderName
             const Text(
@@ -321,7 +343,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                       ),
                       TextFormField(
                         controller: _warningEditController,
-                        enabled: _EditTolerance,
+                        enabled: _Editting,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
@@ -347,7 +369,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                       ),
                       TextFormField(
                         controller: _errorEditController,
-                        enabled: _EditTolerance,
+                        enabled: _Editting,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
@@ -373,7 +395,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                       ),
                       TextFormField(
                         controller: _fatalEditController,
-                        enabled: _EditTolerance,
+                        enabled: _Editting,
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
@@ -431,15 +453,16 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: PaginatedDataTable(
-                // header: Text('Incidentes'),
+                checkboxHorizontalMargin: 0,
+                controller: _DataTableScrollController,
                 rowsPerPage: 5,
                 columns: const [
-                  DataColumn(label: Text('ID'), numeric: true),
-                  DataColumn(label: Text('Estado')),
-                  DataColumn(label: Text('Tipo')),
-                  DataColumn(label: Text('Fecha de creación')),
-                  DataColumn(label: Text('Descripción')),
-                  DataColumn(label: Text('Acciones')),
+                  DataColumn(label: Flexible(child: Text('ID'))),
+                  DataColumn(label: Flexible(child: Text('Estado'))),
+                  DataColumn(label: Flexible(child: Text('Tipo'))),
+                  DataColumn(label: Flexible(child: Text('Fecha de creación'))),
+                  DataColumn(label: Flexible(child: Text('Descripción'))),
+                  DataColumn(label: Flexible(child: Text('Acciones'))),
                 ],
                 source: IncidentDataSource(context, process, _filteredIncidents,
                     () {

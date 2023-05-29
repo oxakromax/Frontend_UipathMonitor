@@ -17,7 +17,6 @@ class UsersListPage extends StatefulWidget {
 class _UsersListPageState extends State<UsersListPage> {
   final _searchController = TextEditingController();
   final _selectedUsers = <UserEntity>[];
-  bool _needsRefresh = true;
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +59,7 @@ class _UsersListPageState extends State<UsersListPage> {
             child: TextField(
               controller: _searchController,
               onChanged: (value) {
-                setState(() {
-                  _needsRefresh = true;
-                });
+                setState(() {});
               },
               decoration: InputDecoration(
                 hintText: 'Buscar',
@@ -82,7 +79,6 @@ class _UsersListPageState extends State<UsersListPage> {
                 : _ApiProvider.GetUsers(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                _needsRefresh = false;
                 return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
@@ -248,10 +244,20 @@ class _UsersListPageState extends State<UsersListPage> {
                   );
                   return;
                 }
+                // show a loading dialog
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                );
                 // call the addUser function from the ApiProvider
                 Provider.of<ApiProvider>(context, listen: false)
                     .addUser(json)
                     .then((value) {
+                  Navigator.pop(context); // close the loading dialog
                   // if the user was added successfully, close the dialog
                   Navigator.pop(context);
                   // Show a snackbar to notify the user
@@ -264,6 +270,7 @@ class _UsersListPageState extends State<UsersListPage> {
                     // refresh the list
                   });
                 }).catchError((e) {
+                  Navigator.pop(context); // close the loading dialog
                   // Close the dialog if there was an error and open new alert dialog
                   Navigator.pop(context);
                   showDialog(

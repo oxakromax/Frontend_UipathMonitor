@@ -1,3 +1,5 @@
+import 'package:UipathMonitor/pages/Client/ticket_form_page.dart';
+import 'package:UipathMonitor/pages/first_menu_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,10 +18,10 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => GeneralProvider("http://localhost:8080"),
+          create: (context) => GeneralProvider("http://190.46.251.181:8080"),
         ),
         ChangeNotifierProxyProvider<GeneralProvider, ApiProvider>(
-          create: (context) => ApiProvider("http://localhost:8080", ""),
+          create: (context) => ApiProvider("http://190.46.251.181:8080", ""),
           update: (context, generalProvider, apiProvider) {
             apiProvider?.updateToken(generalProvider.token);
             return apiProvider!;
@@ -38,8 +40,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     var generalProvider = Provider.of<GeneralProvider>(context);
     return MaterialApp(
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
+        "/": (context) => const FirstMenuPage(),
+        "/client": (context) => const TicketFormPage(),
         '/login': (context) => const LoginPage(key: Key('login')),
         '/user/profile': (context) => generalProvider.token == ""
             ? const LoginPage(key: Key('login'))

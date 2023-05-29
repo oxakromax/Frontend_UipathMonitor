@@ -334,12 +334,15 @@ class ApiProvider with ChangeNotifier {
     // Agrega los encabezados necesarios
     request.headers.addAll(_standartHeader());
 
-    // Agrega los campos de texto al formulario
+    // Agrega los campos de texto al formulario, From go 2006-01-02 15:04:05 -0700
+    String startDateString =
+        DateFormat('yyyy-MM-dd HH:mm:ss').format(startDate);
+    String endDateString = DateFormat('yyyy-MM-dd HH:mm:ss').format(endDate);
     request.fields.addAll({
       'incidentID': incidentId.toString(),
       'details': details,
-      'fechaInicio': DateFormat('yyyy-MM-dd HH:mm:ss').format(startDate),
-      'fechaFin': DateFormat('yyyy-MM-dd HH:mm:ss').format(endDate),
+      'fechaInicio': startDateString,
+      'fechaFin': endDateString,
       'estado': status.toString(),
     });
 
@@ -360,5 +363,16 @@ class ApiProvider with ChangeNotifier {
             '$_baseUrl/user/processes/${incidente.procesoID}/newIncident'),
         headers: _standartHeader(),
         body: jsonEncode(incidente.toJson()));
+  }
+
+  Future<ProcessesEntity> GetClientTicket(String id, email) {
+    // GET /client/tickets
+    // Query Params:
+    // Email - Email del cliente
+    // ID - Id Ticket
+    return http
+        .get(Uri.parse('$_baseUrl/client/tickets?email=$email&id=$id'),
+            headers: _standartHeader())
+        .then((value) => ProcessesEntity.fromJson(jsonDecode(value.body)));
   }
 }

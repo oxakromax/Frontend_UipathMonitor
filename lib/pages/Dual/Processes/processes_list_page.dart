@@ -112,7 +112,7 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                                       processID: ProcessID,
                                     );
                                   },
-                                ));
+                                )).then((value) => setState(() {}));
                               },
                             ),
                           );

@@ -15,7 +15,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
   final TextEditingController _emailController = TextEditingController();
 
-  Future<void> _sendResetRequest() async {
+  void _sendResetRequest() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
@@ -27,26 +27,53 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         'email': _emailController.text,
       };
       request.headers.addAll(headers);
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        // Mostrar mensaje de éxito
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Se ha enviado un correo electrónico con instrucciones para recuperar la contraseña.'),
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+      var response = request.send();
+      response.then((value) {
+        // Hide loading indicator and show dialog indicating that the email was sent in spanish if the request was successful
+        Navigator.pop(context);
+        String text = 'Se ha enviado un correo con una contraseña provisional.';
+        if (value.statusCode != 200) {
+          String body = value.reasonPhrase ?? '';
+          text = 'No se ha podido enviar el correo.\n${body}';
+        }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Correo enviado'),
+            content: Text(text),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Aceptar'),
+              ),
+            ],
           ),
         );
-        Navigator.of(context).pop();
-      } else {
-        // Mostrar mensaje de error
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Ha ocurrido un error al intentar enviar la solicitud de recuperación de contraseña.'),
+      }).onError((error, stackTrace) {
+        // Hide loading indicator and show dialog with error
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(error.toString()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Aceptar'),
+              ),
+            ],
           ),
         );
-      }
+      });
     }
   }
 
