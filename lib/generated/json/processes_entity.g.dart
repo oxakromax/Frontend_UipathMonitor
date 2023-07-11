@@ -62,6 +62,10 @@ ProcessesEntity $ProcessesEntityFromJson(Map<String, dynamic> json) {
   if (activeMonitoring != null) {
     processesEntity.activeMonitoring = activeMonitoring;
   }
+  final int? prioridad = jsonConvert.convert<int>(json['Prioridad']);
+  if (prioridad != null) {
+    processesEntity.prioridad = prioridad;
+  }
   final ProcessesOrganizacion? organizacion =
       jsonConvert.convert<ProcessesOrganizacion>(json['Organizacion']);
   if (organizacion != null) {
@@ -102,6 +106,7 @@ Map<String, dynamic> $ProcessesEntityToJson(ProcessesEntity entity) {
   data['ErrorTolerance'] = entity.errorTolerance;
   data['FatalTolerance'] = entity.fatalTolerance;
   data['ActiveMonitoring'] = entity.activeMonitoring;
+  data['Prioridad'] = entity.prioridad;
   data['Organizacion'] = entity.organizacion?.toJson();
   data['IncidentesProceso'] =
       entity.incidentesProceso?.map((v) => v.toJson()).toList();

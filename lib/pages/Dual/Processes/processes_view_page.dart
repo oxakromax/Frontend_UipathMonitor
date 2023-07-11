@@ -23,6 +23,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
   final _warningEditController = TextEditingController();
   final _errorEditController = TextEditingController();
   final _fatalEditController = TextEditingController();
+  final _priorityEditController = TextEditingController();
   final _AliasEditController = TextEditingController();
   final _UserSearchController = TextEditingController();
   final _ClientSearchController = TextEditingController();
@@ -98,6 +99,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
             _fatalEditController.text =
                 '${snapshot.data?.fatalTolerance ?? ''}';
             _AliasEditController.text = '${snapshot.data?.alias ?? ''}';
+            _priorityEditController.text = '${snapshot.data?.prioridad ?? ''}';
             _filteredIncidents = snapshot.data?.incidentesProceso ?? [];
             if (_incidentSearchController.text.isNotEmpty) {
               // Filter the incidents based on the search input
@@ -185,6 +187,8 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                       process.fatalTolerance =
                           int.tryParse(_fatalEditController.text);
                       process.alias = _AliasEditController.text;
+                      process.prioridad =
+                          int.tryParse(_priorityEditController.text);
                       try {
                         showDialog(
                           context: context,
@@ -322,6 +326,56 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
             const Text(
               'Tolerancia de alertas:',
               style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            // Show priority
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Priority: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                // si está en modo edición, mostrar el TextFormField, sino mostrar el valor
+                if (_Editting)
+                  SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: TextFormField(
+                      // max value: 10
+                      controller: _priorityEditController,
+                      enabled: _Editting,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      // onChanged: (value) {
+                      //   setState(() {});
+                      // },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a value';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                        if (int.tryParse(value)! > 10) {
+                          return 'Please enter a number between 0 and 10';
+                        }
+                        return null;
+                      },
+                    ),
+                  )
+                else
+                  Text(
+                    '${process.prioridad ?? ''}',
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                    // style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+              ],
             ),
             const SizedBox(height: 16),
             Row(

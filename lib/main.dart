@@ -18,10 +18,10 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => GeneralProvider("http://190.46.251.181:8080"),
+          create: (context) => GeneralProvider("http://localhost:8080"),
         ),
         ChangeNotifierProxyProvider<GeneralProvider, ApiProvider>(
-          create: (context) => ApiProvider("http://190.46.251.181:8080", ""),
+          create: (context) => ApiProvider("http://localhost:8080", ""),
           update: (context, generalProvider, apiProvider) {
             apiProvider?.updateToken(generalProvider.token);
             return apiProvider!;

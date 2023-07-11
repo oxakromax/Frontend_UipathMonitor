@@ -33,6 +33,8 @@ class ProcessesEntity {
   int? fatalTolerance;
   @JSONField(name: "ActiveMonitoring")
   bool? activeMonitoring;
+  @JSONField(name: "Prioridad")
+  int? prioridad;
   @JSONField(name: "Organizacion")
   ProcessesOrganizacion? organizacion;
   @JSONField(name: "IncidentesProceso")
@@ -64,6 +66,7 @@ class ProcessesEntity {
       int? errorTolerance,
       int? fatalTolerance,
       bool? activeMonitoring,
+      int? prioridad,
       ProcessesOrganizacion? organizacion,
       List<ProcessesIncidentesProceso>? incidentesProceso,
       List<ProcessesClientes>? clientes,
@@ -83,6 +86,7 @@ class ProcessesEntity {
       ..errorTolerance = errorTolerance ?? this.errorTolerance
       ..fatalTolerance = fatalTolerance ?? this.fatalTolerance
       ..activeMonitoring = activeMonitoring ?? this.activeMonitoring
+      ..prioridad = prioridad ?? this.prioridad
       ..organizacion = organizacion ?? this.organizacion
       ..incidentesProceso = incidentesProceso ?? this.incidentesProceso
       ..clientes = clientes ?? this.clientes
