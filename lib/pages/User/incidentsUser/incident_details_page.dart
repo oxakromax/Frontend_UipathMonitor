@@ -1,3 +1,4 @@
+import 'package:UipathMonitor/Constants/TicketsConst.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,10 +11,9 @@ class IncidentDetailsScreen extends StatefulWidget {
   ProcessesEntity ProcessClass;
   final Function? onIncidentUpdated;
 
-  IncidentDetailsScreen(
-      {required this.incident,
-      this.onIncidentUpdated,
-      required this.ProcessClass});
+  IncidentDetailsScreen({required this.incident,
+    this.onIncidentUpdated,
+    required this.ProcessClass});
 
   @override
   _IncidentDetailsScreenState createState() => _IncidentDetailsScreenState();
@@ -21,7 +21,7 @@ class IncidentDetailsScreen extends StatefulWidget {
 
 class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
   final mapExpanded =
-      <bool>[]; // Lista de booleanos para saber si un elemento está expandido
+  <bool>[]; // Lista de booleanos para saber si un elemento está expandido
   @override
   void initState() {
     super.initState();
@@ -42,7 +42,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
           return _buildIncidentDetails(context, constraints);
         },
       ),
-      floatingActionButton: widget.incident.estado != 3 &&
+      floatingActionButton: widget.incident.estado != "Finalizado" &&
               Provider.of<GeneralProvider>(context, listen: false)
                   .isAuthorized('/user/incidents/details')
           ? FloatingActionButton(
@@ -54,28 +54,27 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     builder: (context) =>
                         IncidentDetailEditPage(incident: widget.incident),
                   ),
-                );
+          );
 
-                // Si el resultado no es nulo, actualiza el incidente
-                if (updatedIncident != null) {
-                  setState(() {
-                    widget.incident = updatedIncident;
-                  });
+          // Si el resultado no es nulo, actualiza el incidente
+          if (updatedIncident != null) {
+            setState(() {
+              widget.incident = updatedIncident;
+            });
 
-                  // Llama a la función onIncidentUpdated si está presente
-                  if (widget.onIncidentUpdated != null) {
-                    widget.onIncidentUpdated!();
-                  }
-                }
-              },
-              child: const Icon(Icons.edit),
-            )
+            // Llama a la función onIncidentUpdated si está presente
+            if (widget.onIncidentUpdated != null) {
+              widget.onIncidentUpdated!();
+            }
+          }
+        },
+        child: const Icon(Icons.edit),
+      )
           : null,
     );
   }
 
-  Widget _buildIncidentDetails(
-      BuildContext context, BoxConstraints constraints) {
+  Widget _buildIncidentDetails(BuildContext context, BoxConstraints constraints) {
     // Formateador de duración amigable
     String formatDuration(Duration duration) {
       String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -95,9 +94,9 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
       padding: const EdgeInsets.all(16.0),
       children: <Widget>[
         Card(
-          color: widget.incident.estado == 1
+          color: widget.incident.estado == TicketsState.Started
               ? Colors.red[100]
-              : (widget.incident.estado == 2)
+              : (widget.incident.estado == TicketsState.InProgress)
                   ? Colors.blue[100]
                   : Colors.green[100],
           shape: RoundedRectangleBorder(
@@ -116,8 +115,8 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                 subtitle: Text('${widget.incident.iD}'),
               ),
               ListTile(
-                title: const Text('Incidente'),
-                subtitle: Text('${widget.incident.incidente}'),
+                title: const Text('Descripción'),
+                subtitle: Text('${widget.incident.descripcion}'),
               ),
               ListTile(
                 title: const Text('Tipo'),
@@ -129,18 +128,14 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                 subtitle: Text(widget.incident.tipo == 1
                     ? 'Incidente'
                     : (widget.incident.tipo == 2)
-                        ? 'Mejora'
-                        : (widget.incident.tipo == 3)
-                            ? 'Mantenimiento'
-                            : 'Otro'),
+                    ? 'Mejora'
+                    : (widget.incident.tipo == 3)
+                    ? 'Mantenimiento'
+                    : 'Otro'),
               ),
               ListTile(
                 title: const Text('Estado'),
-                subtitle: Text(widget.incident.estado == 1
-                    ? 'Abierto'
-                    : (widget.incident.estado == 2)
-                        ? 'En Proceso'
-                        : 'Cerrado'),
+                subtitle: Text(widget.incident.estado ?? "Desconocido"),
               ),
               ListTile(
                 title: const Text('Tiempo Total'),
@@ -234,7 +229,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                         const Icon(Icons.tag),
                         const SizedBox(width: 8),
                         Text(
-                            '${widget.incident.detalles!.indexOf(detail) + 1} ${widget.incident.detalles!.indexOf(detail) == 0 ? '(Inicio)' : widget.incident.detalles!.indexOf(detail) != 0 && widget.incident.detalles!.indexOf(detail) != widget.incident.detalles!.length - 1 ? '(Proceso)' : widget.incident.estado == 3 ? '(Fin)' : '(Proceso)'}'),
+                            '${widget.incident.detalles!.indexOf(detail) + 1} ${widget.incident.detalles!.indexOf(detail) == 0 ? '(Inicio)' : widget.incident.detalles!.indexOf(detail) != 0 && widget.incident.detalles!.indexOf(detail) != widget.incident.detalles!.length - 1 ? '(Proceso)' : widget.incident.estado == "Finalizado" ? '(Fin)' : '(Proceso)'}'),
                         const Spacer(),
                         const Icon(Icons.timer),
                         const SizedBox(width: 4),

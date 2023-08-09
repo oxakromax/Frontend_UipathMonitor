@@ -18,7 +18,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => GeneralProvider("http://localhost:8080"),
+          create: (context) => GeneralProvider(),
         ),
         ChangeNotifierProxyProvider<GeneralProvider, ApiProvider>(
           create: (context) => ApiProvider("http://localhost:8080", ""),

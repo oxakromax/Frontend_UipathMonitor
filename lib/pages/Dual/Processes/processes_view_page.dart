@@ -107,7 +107,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 final search = _incidentSearchController.text;
                 return incident.createdAt!.contains(search) ||
                     incident.iD!.toString().contains(search) ||
-                    incident.incidente!.contains(search);
+                    incident.descripcion!.contains(search);
               }).toList();
             }
 

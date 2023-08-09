@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import 'package:UipathMonitor/Constants/ApiEndpoints.dart';
+import 'package:UipathMonitor/Constants/TicketsConst.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:UipathMonitor/pages/User/incidentsUser/incident_details_page.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../../../Providers/GeneralProvider.dart';
@@ -33,17 +34,19 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
   }
 
   Future<IncidentsEntity> _fetchIncidents() async {
-    final response = await http.get(
-      Uri.parse(
-          '${Provider.of<GeneralProvider>(context, listen: false).url}/user/incidents'),
+    var request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetUserIncidents,
       headers: {
         'Authorization':
             'Bearer ${Provider.of<GeneralProvider>(context, listen: false).token}'
       },
     );
 
+    final response = await request.send();
+
     if (response.statusCode == 200) {
-      return IncidentsEntity.fromJson(jsonDecode(response.body));
+      var body = await response.stream.bytesToString();
+      return IncidentsEntity.fromJson(jsonDecode(body));
     } else {
       throw Exception('Error al cargar los incidentes');
     }
@@ -59,8 +62,8 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
           title: const Text('Gestión de Incidentes'),
           bottom: const TabBar(
             tabs: [
-              Tab(text: 'En curso'),
-              Tab(text: 'Finalizados'),
+              Tab(text: TicketsState.Started),
+              Tab(text: TicketsState.Completed),
             ],
           ),
         ),
@@ -171,7 +174,7 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
                       ),
                       Expanded(
                           child: Text(
-                        "${i.iD} ${i.incidente ?? ""} (${i.estado == 1 ? "Iniciado" : i.estado == 2 ? "En proceso" : i.estado == 3 ? "Finalizado" : "Error"})",
+                            "${i.iD} ${i.descripcion ?? ""} (${i.estado})",
                         overflow: TextOverflow.ellipsis,
                       )),
                     ],

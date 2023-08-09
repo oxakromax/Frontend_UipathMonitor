@@ -6,14 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Constants/ApiEndpoints.dart';
+
 class GeneralProvider with ChangeNotifier {
   String _token = '';
   List<UserRolesRutas> _rutas = [];
   List<UserRoles> _roles = [];
   UserEntity? _user;
-  final String _url;
-
-  GeneralProvider(this._url);
 
   // little map to store pass and user
   Map<String, String> _userMap = {
@@ -26,7 +25,6 @@ class GeneralProvider with ChangeNotifier {
 
   String get token => _token;
 
-  String get url => _url;
 
   UserEntity? get user => _user;
 
@@ -52,25 +50,23 @@ class GeneralProvider with ChangeNotifier {
         timer.cancel();
         return;
       }
-      var request = http.Request('GET', Uri.parse("$_url/pingAuth"));
-      var headers = {
+      var request =
+          ApiEndpoints.getHttpRequest(ApiEndpoints.PingAuth, headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_token',
-      };
-      request.headers.addAll(headers);
+      });
       http.StreamedResponse response = await request.send();
 
       if (response.statusCode == 200) {
         return;
       }
-      headers = {'Content-Type': 'application/x-www-form-urlencoded'};
       // Route Auth
-      request = http.Request('POST', Uri.parse("$_url/auth"));
-      request.bodyFields = {
+      request = ApiEndpoints.getHttpRequest(ApiEndpoints.Login, headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }, bodyFields: {
         'email': _userMap['user'] ?? '',
         'password': _userMap['pass'] ?? '',
-      };
-      request.headers.addAll(headers);
+      });
       response = await request.send();
       if (response.statusCode == 200) {
         var responseString = await response.stream.bytesToString();
@@ -124,13 +120,14 @@ class GeneralProvider with ChangeNotifier {
   }
 
   Future<UserEntity?> fetchProfile() async {
-    final response = await http.get(
-      Uri.parse('${url}/user/profile'),
-      headers: {'Authorization': 'Bearer ${token}'},
-    );
+    var request = ApiEndpoints.getHttpRequest(ApiEndpoints.GetProfile,
+        headers: {'Authorization': 'Bearer $_token'});
+
+    final response = await request.send();
 
     if (response.statusCode == 200) {
-      var profileData = jsonDecode(response.body);
+      var responseString = await response.stream.bytesToString();
+      var profileData = jsonDecode(responseString);
       return UserEntity.fromJson(profileData);
     } else {
       throw Exception('Error al obtener el perfil');

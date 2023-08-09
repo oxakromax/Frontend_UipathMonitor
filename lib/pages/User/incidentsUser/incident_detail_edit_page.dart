@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
+import 'package:UipathMonitor/Constants/TicketsConst.dart';
 import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -22,19 +21,19 @@ class IncidentDetailEditPage extends StatefulWidget {
 
 class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
   TextEditingController _detailsController = TextEditingController();
-  int _Status = 2;
+  String _Status = "En Progreso";
   late Connectivity _connectivity;
   Timer? _timer;
   bool _isConnected = true;
 
-  final DateTime _startDate = DateTime.now();
-  DateTime _endDate = DateTime.now();
+  final DateTime _startDate = DateTime.now().toUtc();
+  DateTime _endDate = DateTime.now().toUtc();
 
   @override
   void initState() {
     super.initState();
     _detailsController.text = "";
-    _Status = 2;
+    _Status = "En Progreso";
     _connectivity = Connectivity();
     _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
       if (result == ConnectivityResult.none) {
@@ -48,7 +47,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
       }
     });
     _timer = Timer.periodic(const Duration(hours: 4), (timer) {
-      _endDate = DateTime.now();
+      _endDate = DateTime.now().toUtc();
       if (_isConnected) {
         Provider.of<ApiProvider>(context, listen: false).PostIncidentDetails(
           context: context,
@@ -64,7 +63,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
           'details': _detailsController.text,
           'fechaInicio': DateFormat('yyyy-MM-dd HH:mm:ss').format(_startDate),
           'fechaFin': DateFormat('yyyy-MM-dd HH:mm:ss').format(_endDate),
-          'estado': _Status, // 2: En curso, 3: Finalizado
+          'estado': _Status,
         };
         Provider.of<GeneralProvider>(context, listen: false)
             .saveLocalProgress(MapOfOptions);
@@ -99,8 +98,8 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
 
   Stream<int> timeDifferenceStream(DateTime startDate) {
     return Stream.periodic(const Duration(seconds: 1), (count) {
-      DateTime now = DateTime.now();
-      int difference = now.difference(startDate).inSeconds;
+      DateTime now = DateTime.now().toUtc();
+      int difference = now.difference(startDate.toUtc()).inSeconds;
       return difference;
     });
   }
@@ -114,7 +113,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
           Text("ID: ${widget.incident.iD}",
               style: const TextStyle(fontSize: 20)),
           const SizedBox(height: 8),
-          Text('Incidente: ${widget.incident.incidente}',
+          Text('Incidente: ${widget.incident.descripcion}',
               style: const TextStyle(fontSize: 20)),
           const SizedBox(height: 20),
           const Text("Tiempo transcurrido: ",
@@ -159,21 +158,21 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          DropdownButton<int>(
+          DropdownButton<String>(
             value: _Status,
-            onChanged: (int? newValue) {
+            onChanged: (String? newValue) {
               setState(() {
                 _Status = newValue!;
               });
             },
-            items: const <DropdownMenuItem<int>>[
-              DropdownMenuItem<int>(
-                value: 2,
-                child: Text('En curso'),
+            items: const <DropdownMenuItem<String>>[
+              DropdownMenuItem<String>(
+                value: TicketsState.InProgress,
+                child: Text(TicketsState.InProgress),
               ),
-              DropdownMenuItem<int>(
-                value: 3,
-                child: Text('Finalizado'),
+              DropdownMenuItem<String>(
+                value: TicketsState.Completed,
+                child: Text(TicketsState.Completed),
               ),
             ],
           ),
@@ -207,7 +206,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
                 );
                 var updatedIncident;
                 if (result == true) {
-                  _endDate = DateTime.now();
+                  _endDate = DateTime.now().toUtc();
                   updatedIncident =
                       await Provider.of<ApiProvider>(context, listen: false)
                           .PostIncidentDetails(

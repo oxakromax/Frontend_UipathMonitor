@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:UipathMonitor/Constants/ApiEndpoints.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:UipathMonitor/classes/user_entity.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,14 +28,16 @@ class ApiProvider with ChangeNotifier {
       String query = '',
       String relational_query = '',
       String relational_condition = ''}) async {
-    final request = http.Request('GET',
-        Uri.parse('$_baseUrl/admin/users?' + (id != null ? 'id=$id' : '')));
-    request.body = json.encode({
-      "query": query,
-      "relational_query": relational_query,
-      "relational_condition": relational_condition
-    });
-    request.headers.addAll(_standartHeader());
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetUsers,
+      queryParams: id != null ? {'id': id.toString()} : null,
+      body: {
+        "query": query,
+        "relational_query": relational_query,
+        "relational_condition": relational_condition
+      },
+      headers: _standartHeader(),
+    );
     final response = await request.send();
     if (response.statusCode != 200) {
       throw Exception('Failed to get users');
@@ -323,7 +326,7 @@ class ApiProvider with ChangeNotifier {
     required String details,
     required DateTime startDate,
     required DateTime endDate,
-    required int status,
+    required String status,
   }) async {
     // Crea una solicitud de tipo multipart
     final request = http.MultipartRequest(

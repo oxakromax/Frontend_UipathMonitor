@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Constants/ApiEndpoints.dart';
 import '../Providers/GeneralProvider.dart';
 import 'ForgotPasswordPage.dart';
 
@@ -49,16 +50,13 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _login(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-      var request = http.Request(
-          'POST',
-          Uri.parse(
-              '${Provider.of<GeneralProvider>(context, listen: false).url}/auth'));
-      request.bodyFields = {
+      var request =
+          ApiEndpoints.getHttpRequest(ApiEndpoints.Login, bodyFields: {
         'email': _usuarioController.text,
         'password': _passwordController.text,
-      };
-      request.headers.addAll(headers);
+      }, headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      });
       http.StreamedResponse response = await request.send();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       if (response.statusCode == 200) {

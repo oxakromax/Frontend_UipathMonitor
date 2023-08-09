@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:UipathMonitor/Constants/ApiEndpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../../Providers/GeneralProvider.dart';
 import '../../classes/user_entity.dart';
-import '../../main.dart';
 
 class EditProfilePage extends StatefulWidget {
   final UserEntity profile;
@@ -21,6 +21,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+
   // password
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmationController =
@@ -46,26 +47,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _updateProfile() async {
-    // Crea una solicitud PUT con los campos del formulario
-    http.MultipartRequest request = http.MultipartRequest(
-      'PUT',
-      Uri.parse(
-          '${Provider.of<GeneralProvider>(context, listen: false).url}/user/profile'),
-    );
-
-    // Agrega los campos del formulario según los valores de los controladores
-    request.fields['name'] = _nameController.text;
-    request.fields['lastName'] = _lastNameController.text;
-    request.fields['email'] = _emailController.text;
-
-    // Si se proporciona una nueva contraseña, actualiza el campo 'password'
+    var fields = {
+      'name': _nameController.text,
+      'lastName': _lastNameController.text,
+      'email': _emailController.text,
+    };
     if (_passwordController.text.isNotEmpty) {
-      request.fields['password'] = _passwordController.text;
+      fields['password'] = _passwordController.text;
     }
-
-    // Agrega el encabezado de autorización
-    request.headers['Authorization'] =
-        'Bearer ${Provider.of<GeneralProvider>(context, listen: false).token}';
+    var request = ApiEndpoints.getMultipartRequest(ApiEndpoints.UpdateProfile,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization':
+              'Bearer ${Provider.of<GeneralProvider>(context, listen: false).token}'
+        },
+        fields: fields);
 
     // Envía la solicitud
     http.StreamedResponse response = await request.send();

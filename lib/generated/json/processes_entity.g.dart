@@ -228,15 +228,15 @@ ProcessesIncidentesProceso $ProcessesIncidentesProcesoFromJson(
   if (proceso != null) {
     processesIncidentesProceso.proceso = proceso;
   }
-  final String? incidente = jsonConvert.convert<String>(json['Incidente']);
+  final String? incidente = jsonConvert.convert<String>(json['Descripcion']);
   if (incidente != null) {
-    processesIncidentesProceso.incidente = incidente;
+    processesIncidentesProceso.descripcion = incidente;
   }
   final int? tipo = jsonConvert.convert<int>(json['Tipo']);
   if (tipo != null) {
     processesIncidentesProceso.tipo = tipo;
   }
-  final int? estado = jsonConvert.convert<int>(json['Estado']);
+  final String? estado = jsonConvert.convert<String>(json['Estado']);
   if (estado != null) {
     processesIncidentesProceso.estado = estado;
   }
@@ -257,7 +257,7 @@ Map<String, dynamic> $ProcessesIncidentesProcesoToJson(
   data['DeletedAt'] = entity.deletedAt;
   data['ProcesoID'] = entity.procesoID;
   data['Proceso'] = entity.proceso;
-  data['Incidente'] = entity.incidente;
+  data['Descripcion'] = entity.descripcion;
   data['Tipo'] = entity.tipo;
   data['Estado'] = entity.estado;
   data['Detalles'] = entity.detalles?.map((v) => v.toJson()).toList();

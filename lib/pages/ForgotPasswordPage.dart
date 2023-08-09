@@ -1,10 +1,7 @@
+import 'package:UipathMonitor/Constants/ApiEndpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-
-import '../Providers/GeneralProvider.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
@@ -18,15 +15,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   void _sendResetRequest() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
-      var request = http.Request(
-          'POST',
-          Uri.parse(
-              '${Provider.of<GeneralProvider>(context, listen: false).url}/forgot'));
-      request.bodyFields = {
+      var request =
+          ApiEndpoints.getHttpRequest(ApiEndpoints.ForgotPassword, bodyFields: {
         'email': _emailController.text,
-      };
-      request.headers.addAll(headers);
+      }, headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      });
       // Show loading indicator
       showDialog(
         context: context,
@@ -153,7 +147,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   ButtonStyle buildButtonStyle() {
     return ButtonStyle(
       backgroundColor:
-          MaterialStateProperty.all(Colors.blue), // color del botón
+      MaterialStateProperty.all(Colors.blue), // color del botón
       // redondear los bordes del botón
       shape: MaterialStateProperty.all(
         RoundedRectangleBorder(

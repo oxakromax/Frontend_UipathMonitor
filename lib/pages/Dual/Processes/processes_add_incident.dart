@@ -1,3 +1,4 @@
+import 'package:UipathMonitor/Constants/TicketsConst.dart';
 import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:provider/provider.dart';
 
 class ProcessesAddIncident extends StatefulWidget {
   final ProcessesEntity process;
+
   const ProcessesAddIncident({Key? key, required this.process})
       : super(key: key);
 
@@ -18,10 +20,10 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
   var processAlias = '';
   var processId = 0;
   var typeofIncident = {
-    "Incidente": 1,
-    "Mejora": 2,
-    "Mantenimiento": 3,
-    "Otro": 4,
+    TicketsType.Incident: 1,
+    TicketsType.Improvement: 2,
+    TicketsType.Maintenance: 3,
+    TicketsType.Other: 4,
   };
   late ApiProvider apiProvider;
   String incidentDescription = '';
@@ -109,7 +111,7 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
                     NewIncident.iD = 0;
                     NewIncident.procesoID = processId;
                     NewIncident.tipo = typeofIncident[selectedTypeOfIncident];
-                    NewIncident.incidente = incidentDescription;
+                    NewIncident.descripcion = incidentDescription;
                     // Little dialog to wait
                     showDialog(
                         context: context,

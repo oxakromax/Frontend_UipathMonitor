@@ -189,12 +189,12 @@ class ProcessesIncidentesProceso {
   int? procesoID;
   @JSONField(name: "Proceso")
   dynamic proceso;
-  @JSONField(name: "Incidente")
-  String? incidente;
+  @JSONField(name: "Descripcion")
+  String? descripcion;
   @JSONField(name: "Tipo")
   int? tipo;
   @JSONField(name: "Estado")
-  int? estado;
+  String? estado;
   @JSONField(name: "Detalles")
   List<ProcessesIncidentesProcesoDetalles>? detalles;
 
@@ -214,7 +214,7 @@ class ProcessesIncidentesProceso {
       dynamic proceso,
       String? incidente,
       int? tipo,
-      int? estado,
+      String? estado,
       List<ProcessesIncidentesProcesoDetalles>? detalles}) {
     return ProcessesIncidentesProceso()
       ..iD = iD ?? this.iD
@@ -223,7 +223,7 @@ class ProcessesIncidentesProceso {
       ..deletedAt = deletedAt ?? this.deletedAt
       ..procesoID = procesoID ?? this.procesoID
       ..proceso = proceso ?? this.proceso
-      ..incidente = incidente ?? this.incidente
+      ..descripcion = incidente ?? this.descripcion
       ..tipo = tipo ?? this.tipo
       ..estado = estado ?? this.estado
       ..detalles = detalles ?? this.detalles;

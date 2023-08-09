@@ -1,3 +1,4 @@
+import 'package:UipathMonitor/Constants/TicketsConst.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:UipathMonitor/pages/User/incidentsUser/incident_details_page.dart';
 import 'package:flutter/material.dart';
@@ -11,31 +12,19 @@ class IncidentDataSource extends DataTableSource {
 
   IncidentDataSource(this.context, this.process, this._incidents, this._func);
 
-  Widget _buildIncidentStateIcon(int state) {
+  Widget _buildIncidentStateIcon(String state) {
     switch (state) {
-      case 1:
+      case TicketsState.Started:
         return const Icon(Icons.play_arrow, color: Colors.blue);
-      case 2:
+      case TicketsState.InProgress:
         return const Icon(Icons.timelapse, color: Colors.orange);
-      case 3:
+      case TicketsState.Completed:
         return const Icon(Icons.check_circle, color: Colors.green);
       default:
         return const Icon(Icons.error, color: Colors.red);
     }
   }
 
-  String _getIncidentStateText(int state) {
-    switch (state) {
-      case 1:
-        return 'Iniciado';
-      case 2:
-        return 'En progreso';
-      case 3:
-        return 'Completado';
-      default:
-        return 'Desconocido';
-    }
-  }
 
   String _getIncidentTipoText(int tipo) {
     switch (tipo) {
@@ -72,9 +61,9 @@ class IncidentDataSource extends DataTableSource {
         DataCell(Text('${incident.iD}')),
         DataCell(Row(
           children: [
-            _buildIncidentStateIcon(incident.estado ?? 0),
+            _buildIncidentStateIcon(incident.estado ?? ""),
             const SizedBox(width: 8),
-            Text(_getIncidentStateText(incident.estado ?? 0)),
+            Text(incident.estado ?? "Desconocido"),
           ],
         )),
         DataCell(Text(_getIncidentTipoText(incident.tipo ?? 0))),
@@ -87,7 +76,7 @@ class IncidentDataSource extends DataTableSource {
               children: [
                 Flexible(
                   child: Text(
-                    incident.incidente ?? "",
+                    incident.descripcion ?? "",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
