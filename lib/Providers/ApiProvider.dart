@@ -48,11 +48,13 @@ class ApiProvider with ChangeNotifier {
 
   // Create Organization
   Future<int> createOrganization(Organization organization) async {
-    final response = await http.post(
-      Uri.parse('$_baseUrl/admin/organization'),
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.CreateOrganization,
       headers: _standartHeader(),
-      body: json.encode(organization.toJson()),
+      body: organization.toJson(),
     );
+
+    final response = await request.send();
 
     if (response.statusCode == 200) {
       return response.statusCode;
@@ -63,43 +65,51 @@ class ApiProvider with ChangeNotifier {
 
   // Get Organizations
   Future<List<Organization>> getOrganizations() async {
-    final response = await http.get(
-      Uri.parse('$_baseUrl/admin/organization'),
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetOrganizations,
       headers: _standartHeader(),
     );
-
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
     if (response.statusCode == 200) {
-      List<dynamic> jsonResponse = json.decode(response.body);
+      List<dynamic> jsonResponse = json.decode(body);
       return jsonResponse.map((json) => Organization.fromJson(json)).toList();
     } else {
-      return [];
+      throw Exception(
+          'Failed to get organizations\n' + response.statusCode.toString());
     }
   }
 
   Future<Map<String, dynamic>> getOrganization(int id) async {
-    final response = await http.get(
-      Uri.parse('$_baseUrl/admin/organization?id=$id'),
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetOrganizations,
+      queryParams: {'id': id.toString()},
       headers: _standartHeader(),
     );
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return json.decode(body);
     } else {
-      throw Exception('Failed to get organization');
+      throw Exception('Failed to get organization\n${response.statusCode}');
     }
   }
 
   // Update Organization
   Future<Organization> updateOrganization(Organization organization) async {
-    final response = await http.put(
-      Uri.parse('$_baseUrl/admin/organization?id=${organization.id}'),
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.UpdateOrganization,
+      queryParams: {'id': organization.id.toString()},
       headers: _standartHeader(),
-      body: json.encode(organization.toJson()),
+      body: organization.toJson(),
     );
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
-      return Organization.fromJson(json.decode(response.body));
+      return Organization.fromJson(json.decode(body));
     } else {
-      var jsonResponse = json.decode(response.body);
+      var jsonResponse = json.decode(body);
       throw Exception(jsonResponse.toString());
     }
   }
