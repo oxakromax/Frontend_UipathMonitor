@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ApiEndpoints {
-  static const String BaseUrl = "http://localhost:8080";
+  static const String BaseUrl = "http://192.168.100.28:8080";
 
   // Arrays of {Method, Endpoint}
   static const List<String> Login = ["/auth", "POST"];
@@ -90,6 +92,39 @@ class ApiEndpoints {
   ];
   static const List<String> GetClientTicket = ["/client/tickets", "GET"];
   static const List<String> GetOrgData = ["/admin/downloads/orgs", "GET"];
+  static const List<String> GetProcessesData = [
+    "/admin/downloads/processes",
+    "GET"
+  ];
+  static const List<String> GetUserData = ["/admin/downloads/users", "GET"];
+  static const List<String> GetTicketSettings = [
+    "/user/incidents/details",
+    "GET"
+  ];
+  static const List<String> GetTicketsType = [
+    "/user/processes/TicketsType",
+    "GET"
+  ];
+
+  static Future<String> SaveResponseToFile(StreamedResponse response) async {
+    final contentDisposition = response.headers['content-disposition'];
+
+    // Ajustando la expresión regular
+    final match = RegExp(r'filename=([^;]*)').firstMatch(contentDisposition!);
+
+    // Eliminando espacios en blanco al principio o al final del nombre del archivo, si los hay.
+    final fileName = match?.group(1)?.trim() ?? 'default_file_name.ext';
+
+    final bytes = await response.stream.toBytes();
+    final directory = await getApplicationDocumentsDirectory();
+    String pathSeparator = Platform.isWindows ? '\\' : '/';
+    final filePath = '${directory.path}$pathSeparator$fileName';
+
+    final file = File(filePath);
+    await file.writeAsBytes(bytes);
+
+    return filePath;
+  }
 
   static Request getHttpRequest(List<String> endpoint,
       {Map<String, String>? params,

@@ -59,10 +59,10 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
       child: Scaffold(
         drawer: AppDrawer(),
         appBar: AppBar(
-          title: const Text('Gestión de Incidentes'),
+          title: const Text('Gestión de tickets'),
           bottom: const TabBar(
             tabs: [
-              Tab(text: TicketsState.Started),
+              Tab(text: "Pendientes"),
               Tab(text: TicketsState.Completed),
             ],
           ),
@@ -165,7 +165,7 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
             ))
           ]),
           children: [
-            for (var i in incident.incidentesProceso?.reversed.toList() ?? [])
+            for (var i in incident.incidentesProceso?.toList() ?? [])
               ListTile(
                   title: Row(
                     children: [
@@ -174,9 +174,39 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
                       ),
                       Expanded(
                           child: Text(
-                            "${i.iD} ${i.descripcion ?? ""} (${i.estado})",
+                        "${i.iD} ${i.descripcion ?? ""} (${i.estado})",
                         overflow: TextOverflow.ellipsis,
                       )),
+                      // Priority Icon
+                      if (i.prioridad != null &&
+                          i.estado != TicketsState.Completed)
+                        Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: // Priority is from 1 to 10, 10 highest priority
+                                i.prioridad! <= 3
+                                    ? Colors.green
+                                    : i.prioridad! <= 6
+                                        ? Colors.orange
+                                        : Colors.red,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.priority_high_rounded,
+                                color: Colors.white,
+                              ),
+                              Text(
+                                i.prioridad.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 5)
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                   subtitle: Row(

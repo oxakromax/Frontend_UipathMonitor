@@ -1,20 +1,36 @@
 import 'package:UipathMonitor/Providers/ApiProvider.dart';
+import 'package:UipathMonitor/Providers/GeneralProvider.dart';
 import 'package:UipathMonitor/pages/Dual/Processes/processes_view_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart'; // Esta línea ya estaba importada
 import 'package:provider/provider.dart';
+import '../../../app_drawer.dart';
 
 class ProcessesListPage extends StatefulWidget {
   const ProcessesListPage({Key? key}) : super(key: key);
+
   @override
   _ProcessesListPageState createState() => _ProcessesListPageState();
 }
 
 class _ProcessesListPageState extends State<ProcessesListPage> {
   TextEditingController _searchController = TextEditingController();
+  late List<bool> _isSelectedList;
+  late List<dynamic> processes;
+
+  @override
+  void initState() {
+    super.initState();
+    _isSelectedList = []; // Inicializa la lista de selección
+  }
+
+  bool get _isAnyItemSelected => _isSelectedList.any((element) => element);
 
   @override
   Widget build(BuildContext context) {
+    var apiProvider = Provider.of<ApiProvider>(context, listen: false);
     return Scaffold(
+      drawer: AppDrawer(),
       appBar: AppBar(
         title: Text('Procesos'),
         actions: [
@@ -48,7 +64,7 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _searchController,
-              onChanged: (value) {
+              onEditingComplete: () {
                 setState(() {});
               },
               decoration: InputDecoration(
@@ -69,8 +85,7 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error al cargar los datos'));
                     } else {
-                      List<dynamic> processes = snapshot.data;
-
+                      processes = snapshot.data;
                       if (_searchController.text.isNotEmpty) {
                         processes = processes.where((process) {
                           String searchTerm =
@@ -98,22 +113,70 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                               process['Organizacion']['Nombre'];
                           final ProcessID = process['ID'];
 
-                          return ListTile(
-                            title: Text(processName),
-                            subtitle:
-                                Text(folderName + ' - ' + organizationName),
-                            trailing: IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                // Navegar a la pantalla de creación/edición de organizaciones: ProcessesViewPage
+                          if (_isSelectedList.length <= index) {
+                            _isSelectedList.add(false);
+                          }
+
+                          return GestureDetector(
+                            onTap: () {
+                              if (_isAnyItemSelected) {
+                                setState(() {
+                                  _isSelectedList[index] =
+                                      !_isSelectedList[index];
+                                });
+                              } else {
                                 Navigator.push(context, MaterialPageRoute(
                                   builder: (context) {
                                     return ProcessesViewPage(
                                       processID: ProcessID,
                                     );
                                   },
-                                )).then((value) => setState(() {}));
-                              },
+                                )).then((value) {
+                                  setState(() {
+                                    _isSelectedList[index] = false;
+                                  });
+                                });
+                              }
+                            },
+                            onLongPress: () {
+                              setState(() {
+                                _isSelectedList[index] = true;
+                              });
+                            },
+                            child: Card(
+                              color: _isSelectedList[index]
+                                  ? Colors.blue.withOpacity(0.5)
+                                  : null,
+                              child: ListTile(
+                                title: Text(processName),
+                                subtitle:
+                                    Text(folderName + ' - ' + organizationName),
+                                trailing: _isSelectedList[index]
+                                    ? Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(Icons.edit),
+                                            onPressed: () {
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(
+                                                builder: (context) {
+                                                  return ProcessesViewPage(
+                                                    processID: ProcessID,
+                                                  );
+                                                },
+                                              )).then((value) {
+                                                setState(() {
+                                                  _isSelectedList[index] =
+                                                      false;
+                                                });
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      )
+                                    : null,
+                              ),
                             ),
                           );
                         },
@@ -126,6 +189,41 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
           ),
         ],
       ),
+      floatingActionButton: _isAnyItemSelected &&
+              Provider.of<GeneralProvider>(context, listen: false)
+                      .HasRole("downloader") ==
+                  true
+          ? FloatingActionButton(
+              onPressed: () async {
+                // Get ids of selected processes separated by commas without the last comma
+                String selectedProcesses = '';
+                for (int i = 0; i < _isSelectedList.length; i++) {
+                  if (_isSelectedList[i]) {
+                    selectedProcesses += processes[i]['ID'].toString() + ',';
+                  }
+                }
+                selectedProcesses = selectedProcesses.substring(
+                    0, selectedProcesses.length - 1);
+                var result =
+                    await apiProvider.downloadProcessesFile(selectedProcesses);
+                if (result != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Archivo descargado en $result'),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error al descargar el archivo'),
+                    ),
+                  );
+                }
+              },
+              child: Icon(Icons.download),
+              tooltip: "Descargar",
+            )
+          : null,
     );
   }
 }

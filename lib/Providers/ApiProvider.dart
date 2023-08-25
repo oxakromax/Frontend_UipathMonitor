@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:UipathMonitor/Constants/ApiEndpoints.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:UipathMonitor/classes/user_entity.dart';
@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-
 import '../classes/organization_entity.dart';
 
 class ApiProvider with ChangeNotifier {
@@ -63,10 +62,55 @@ class ApiProvider with ChangeNotifier {
     }
   }
 
+  // Download File of Organization
+  Future<String?> downloadOrganizationFile(int id) async {
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetOrgData,
+      queryParams: {'id': id.toString()},
+      headers: _standartHeader(),
+    );
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      return await ApiEndpoints.SaveResponseToFile(response);
+    } else {
+      throw Exception('Failed to download file');
+    }
+  }
+
+  // Download File of Processes (String params)
+  Future<String?> downloadProcessesFile(String params) async {
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetProcessesData,
+      queryParams: {'id': params},
+      headers: _standartHeader(),
+    );
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      return await ApiEndpoints.SaveResponseToFile(response);
+    } else {
+      throw Exception('Failed to download file');
+    }
+  }
+
+  // Download file of Users (String params)
+  Future<String?> downloadUsersFile(String params) async {
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetUserData,
+      queryParams: {'id': params},
+      headers: _standartHeader(),
+    );
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      return await ApiEndpoints.SaveResponseToFile(response);
+    } else {
+      throw Exception('Failed to download file');
+    }
+  }
+
   // Get Organizations
   Future<List<Organization>> getOrganizations() async {
     final request = ApiEndpoints.getHttpRequest(
-      ApiEndpoints.GetOrganizations,
+      ApiEndpoints.GetUserOrganizations,
       headers: _standartHeader(),
     );
     final response = await request.send();
@@ -111,6 +155,43 @@ class ApiProvider with ChangeNotifier {
     } else {
       var jsonResponse = json.decode(body);
       throw Exception(jsonResponse.toString());
+    }
+  }
+
+  // GetTicketSettings query id
+  Future<Map<String, dynamic>> getTicketSettings(int id) async {
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetTicketSettings,
+      queryParams: {'id': id.toString()},
+      headers: _standartHeader(),
+    );
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+    if (response.statusCode == 200) {
+      return json.decode(body);
+    } else {
+      throw Exception('Failed to get ticket settings\n${response.statusCode}');
+    }
+  }
+
+  // GetTicketsType No params, returns Map<String, int>
+  Future<Map<String, int>> getTicketsType() async {
+    final request = ApiEndpoints.getHttpRequest(
+      ApiEndpoints.GetTicketsType,
+      headers: _standartHeader(),
+    );
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(body);
+      var RetMap = <String, int>{};
+      jsonResponse.forEach((key, value) {
+        // cast value to int
+        RetMap[key] = value;
+      });
+      return RetMap;
+    } else {
+      throw Exception('Failed to get ticket type\n${response.statusCode}');
     }
   }
 
@@ -337,6 +418,7 @@ class ApiProvider with ChangeNotifier {
     required DateTime startDate,
     required DateTime endDate,
     required String status,
+    required bool isDiagnostic,
   }) async {
     // Crea una solicitud de tipo multipart
     final request = http.MultipartRequest(
@@ -357,6 +439,7 @@ class ApiProvider with ChangeNotifier {
       'fechaInicio': startDateString,
       'fechaFin': endDateString,
       'estado': status.toString(),
+      'IsDiagnostic': isDiagnostic.toString(),
     });
 
     // Enviar la solicitud y obtener la respuesta

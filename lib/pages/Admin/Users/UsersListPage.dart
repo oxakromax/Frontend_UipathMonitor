@@ -43,6 +43,21 @@ class _UsersListPageState extends State<UsersListPage> {
           const SizedBox(
             width: 10,
           ),
+          if (_selectedUsers.isNotEmpty &&
+              Provider.of<GeneralProvider>(context, listen: false)
+                      .HasRole("downloader") ==
+                  true)
+            // Download button+
+            FloatingActionButton(
+              tooltip: 'Descargar usuarios seleccionados',
+              onPressed: () {
+                downloadUsers(context, _selectedUsers);
+              },
+              child: const Icon(Icons.download),
+            ),
+          const SizedBox(
+            width: 10,
+          ),
           FloatingActionButton(
             tooltip: 'Agregar usuario',
             onPressed: () {
@@ -72,7 +87,7 @@ class _UsersListPageState extends State<UsersListPage> {
           ),
           Expanded(
               child: FutureBuilder(
-            future: _searchController?.text?.isNotEmpty ?? false
+                future: _searchController.text.isNotEmpty ?? false
                 ? _ApiProvider.GetUsers(
                     query:
                         "Nombre like '%${_searchController.text}%' or Email like '%${_searchController.text}%' or Apellido like '%${_searchController.text}%'")
@@ -612,5 +627,30 @@ class _UsersListPageState extends State<UsersListPage> {
         );
       },
     );
+  }
+
+  downloadUsers(BuildContext context, List<UserEntity> selectedUsers) async {
+    // Get ids of selected users separated by commas without the last comma
+    String selectedUsersIds = '';
+    for (int i = 0; i < selectedUsers.length; i++) {
+      selectedUsersIds += selectedUsers[i].iD.toString() + ',';
+    }
+    selectedUsersIds =
+        selectedUsersIds.substring(0, selectedUsersIds.length - 1);
+    var result = await Provider.of<ApiProvider>(context, listen: false)
+        .downloadUsersFile(selectedUsersIds);
+    if (result != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Archivo descargado en $result'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error al descargar el archivo'),
+        ),
+      );
+    }
   }
 }

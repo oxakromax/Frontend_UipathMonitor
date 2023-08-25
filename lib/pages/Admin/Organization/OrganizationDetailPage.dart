@@ -1,3 +1,4 @@
+import 'package:UipathMonitor/Providers/GeneralProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:UipathMonitor/pages/Admin/Organization/OrganizationCreationOrEditPage.dart';
@@ -16,7 +17,7 @@ class OrganizationDetailsPage extends StatefulWidget {
 
 class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
   ValueNotifier<Map<String, dynamic>> organizationNotifier =
-      ValueNotifier<Map<String, dynamic>>({}); // <==
+  ValueNotifier<Map<String, dynamic>>({}); // <==
 
   void loadData() async {
     var apiProvider = Provider.of<ApiProvider>(context, listen: false);
@@ -30,130 +31,6 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
     loadData();
   }
 
-  // JSON Example:
-// {
-//     "ID": 1,
-//     "CreatedAt": "0000-12-31T20:00:00-04:00",
-//     "UpdatedAt": "2023-03-26T00:26:44.154322-03:00",
-//     "DeletedAt": null,
-//     "Nombre": "Organización 1",
-//     "Uipathname": "studentfinis",
-//     "Tenantname": "DefaultTenant",
-//     "AppID": "e2c3bb3564b0d83e811a9e361f33457afaff4a3ab96d3a63443af3395e831a0b5a8a256b1c6e5d2a51929a108f7ef4eddeb2cb6f",
-//     "AppSecret": "34672cdbeadf901dc7c8789b6a0cc5afbcd2f7b6362c199622309b9b1bc47073",
-//     "AppScope": "OR.Webhooks OR.Monitoring OR.Monitoring OR.ML OR.Tasks OR.Analytics OR.Folders OR.BackgroundTasks OR.TestSets OR.TestSetExecutions OR.TestSetSchedules OR.TestDataQueues OR.Audit OR.License OR.Settings OR.Robots OR.Machines OR.Execution OR.Assets OR.Administration OR.Users OR.Jobs OR.Queues OR.Hypervisor",
-//     "BaseURL": "https://cloud.uipath.com/",
-//     "Clientes": [
-//         {
-//             "ID": 1,
-//             "CreatedAt": "0001-01-01T00:00:00Z",
-//             "UpdatedAt": "0001-01-01T00:00:00Z",
-//             "DeletedAt": null,
-//             "Nombre": "cliente",
-//             "Apellido": "cliente",
-//             "Email": "cliente@cliente.cl",
-//             "OrganizacionID": 1,
-//             "Organizacion": null,
-//             "Procesos": null
-//         },
-//         {
-//             "ID": 11,
-//             "CreatedAt": "2023-03-05T00:25:35.141099-03:00",
-//             "UpdatedAt": "2023-03-05T00:25:35.141099-03:00",
-//             "DeletedAt": null,
-//             "Nombre": "Juan",
-//             "Apellido": "Perez",
-//             "Email": "juan.perez@test.cl",
-//             "OrganizacionID": 1,
-//             "Organizacion": null,
-//             "Procesos": null
-//         },
-//         {
-//             "ID": 14,
-//             "CreatedAt": "2023-03-05T15:18:56.059822-03:00",
-//             "UpdatedAt": "2023-03-05T15:18:56.059822-03:00",
-//             "DeletedAt": null,
-//             "Nombre": "Juan",
-//             "Apellido": "Perez",
-//             "Email": "juan.perez@test.cl",
-//             "OrganizacionID": 1,
-//             "Organizacion": null,
-//             "Procesos": null
-//         },
-//         {
-//             "ID": 12,
-//             "CreatedAt": "2023-03-05T00:25:56.784104-03:00",
-//             "UpdatedAt": "2023-03-05T00:25:56.784104-03:00",
-//             "DeletedAt": null,
-//             "Nombre": "Juan",
-//             "Apellido": "Perez",
-//             "Email": "juan.perez@test.cl",
-//             "OrganizacionID": 1,
-//             "Organizacion": null,
-//             "Procesos": null
-//         },
-//         {
-//             "ID": 13,
-//             "CreatedAt": "2023-03-05T00:27:00.063279-03:00",
-//             "UpdatedAt": "2023-03-05T00:27:00.063279-03:00",
-//             "DeletedAt": null,
-//             "Nombre": "Juan",
-//             "Apellido": "Perez",
-//             "Email": "juan.perez@test.cl",
-//             "OrganizacionID": 1,
-//             "Organizacion": null,
-//             "Procesos": null
-//         }
-//     ],
-//     "Procesos": [
-//         {
-//             "ID": 1,
-//             "CreatedAt": "0001-01-01T00:00:00Z",
-//             "UpdatedAt": "0001-01-01T00:00:00Z",
-//             "DeletedAt": null,
-//             "Nombre": "ProcesoProyectoTitulo",
-//             "Alias": "",
-//             "Folderid": 3902201,
-//             "Foldername": "",
-//             "OrganizacionID": 1,
-//             "WarningTolerance": 7,
-//             "ErrorTolerance": 5,
-//             "FatalTolerance": 1,
-//             "Organizacion": null,
-//             "IncidentesProceso": null,
-//             "Clientes": null,
-//             "Usuarios": null
-//         }
-//     ],
-//     "Usuarios": [
-//         {
-//             "ID": 1,
-//             "CreatedAt": "0000-12-31T19:59:15-04:00",
-//             "UpdatedAt": "2023-04-03T03:23:40.046664-04:00",
-//             "DeletedAt": null,
-//             "Nombre": "admin",
-//             "Apellido": "admin",
-//             "Email": "admin@admin.cl",
-//             "Password": "",
-//             "Roles": null,
-//             "Procesos": null,
-//             "Organizaciones": null
-//         },
-//         {
-//             "ID": 2,
-//             "CreatedAt": "0000-12-31T20:00:00-04:00",
-//             "UpdatedAt": "2023-03-26T00:27:15.520681-03:00",
-//             "DeletedAt": null,
-//             "Nombre": "desarrollador",
-//             "Apellido": "desarrollador",
-//             "Email": "oxakromax@hotmail.com",
-//             "Password": "",
-//             "Roles": null,
-//             "Procesos": null,
-//             "Organizaciones": null
-//         }
-//     ]
-// }
   @override
   Widget build(BuildContext context) {
     // super.build(context);
@@ -173,13 +50,57 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Download data button
+            if (Provider.of<GeneralProvider>(context, listen: false)
+                    .HasRole("downloader") ==
+                true)
+              FloatingActionButton(
+                heroTag: 'downloadData',
+                tooltip: 'Download Data',
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.download_rounded),
+                    Text("Download Data",
+                        style: TextStyle(fontSize: 10),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+                onPressed: () async {
+                  var result =
+                      await apiProvider.downloadOrganizationFile(widget.id);
+                  if (result != null) {
+                    // se obtiene el Path del archivo en Result, se debe mostrar en pantalla como una ventana emergente que indique donde se guardo el archivo
+                    if (!context.mounted) return;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        // Data downloaded in result
+                        content: Text("Data downloaded in $result"),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  } else {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Error downloading data'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+              ),
+            const SizedBox(width: 10),
             FloatingActionButton(
               heroTag: 'editOrg',
               tooltip: 'Edit Organization',
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.edit),
                   Text("Edit Organization",
                       style: TextStyle(fontSize: 10),
@@ -206,11 +127,11 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
               child: FloatingActionButton(
                   heroTag: 'addClient',
                   tooltip: 'Add Client',
-                  child: Column(
+                  child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     textDirection: TextDirection.ltr,
-                    children: const [
+                    children: [
                       Icon(Icons.person_add),
                       Text("Add Client",
                           style: TextStyle(fontSize: 10),
@@ -219,21 +140,21 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
                     ],
                   ),
                   onPressed: () => {
-                        // little widget to add a client
-                        AddClientDialog(context, _nameController,
-                            _lastNameController, _emailController, apiProvider)
-                      }),
+                    // little widget to add a client
+                    AddClientDialog(context, _nameController,
+                        _lastNameController, _emailController, apiProvider)
+                  }),
             ),
             const SizedBox(width: 10),
             SizedBox(
               child: FloatingActionButton(
                   heroTag: 'addUser',
                   tooltip: 'Add User',
-                  child: Column(
+                  child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     textDirection: TextDirection.ltr,
-                    children: const [
+                    children: [
                       Icon(Icons.person_add_alt_1_sharp),
                       Text("Add User",
                           style: TextStyle(fontSize: 10),
@@ -245,7 +166,7 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
                     var Users = await apiProvider.GetUsers(
                         relational_condition: "NotInOrg",
                         relational_query:
-                            organizationNotifier.value['ID'].toString());
+                        organizationNotifier.value['ID'].toString());
                     if (Users == null) {
                       return;
                     }
@@ -260,10 +181,10 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
             FloatingActionButton(
               heroTag: 'deleteOrganization',
               tooltip: 'Delete Organization',
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.delete),
                   Text('Delete',
                       style: TextStyle(fontSize: 10),
@@ -321,20 +242,20 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
                         children: [
                           TextSpan(
                               text:
-                                  '''Esta pantalla muestra información sobre la organización seleccionada.\n\n'''),
+                              '''Esta pantalla muestra información sobre la organización seleccionada.\n\n'''),
                           TextSpan(
                               text: '''Sobre los usuarios y clientes:\n''',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           TextSpan(
                               text:
-                                  '''Recuerda que si eliminas a un usuario o cliente de la organización, lo eliminarás de todos los procesos asociados a la misma. En el caso del cliente, este será eliminado de manera permanente.
+                              '''Recuerda que si eliminas a un usuario o cliente de la organización, lo eliminarás de todos los procesos asociados a la misma. En el caso del cliente, este será eliminado de manera permanente.
 Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son agregados por proceso a la organización.\n\n'''),
                           TextSpan(
                               text: '''Sobre los procesos:\n''',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           TextSpan(
                               text:
-                                  '''Los procesos son inmutables, es decir, no se pueden eliminar, solo asignarles un "Alias" para identificarlos. ya que estos son automaticamente obtenidos desde el Orchestrator de UiPath.'''),
+                              '''Los procesos son inmutables, es decir, no se pueden eliminar, solo asignarles un "Alias" para identificarlos. ya que estos son automaticamente obtenidos desde el Orchestrator de UiPath.'''),
                         ],
                       ),
                     ),
@@ -405,15 +326,15 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                 ),
                                 for (var usuario in _userFinder != ""
                                     ? snapshot['Usuarios'].where((element) =>
-                                        element['Nombre']
-                                            .toLowerCase()
-                                            .contains(_userFinder) ||
-                                        element['Apellido']
-                                            .toLowerCase()
-                                            .contains(_userFinder) ||
-                                        element['Email']
-                                            .toLowerCase()
-                                            .contains(_userFinder))
+                                element['Nombre']
+                                    .toLowerCase()
+                                    .contains(_userFinder) ||
+                                    element['Apellido']
+                                        .toLowerCase()
+                                        .contains(_userFinder) ||
+                                    element['Email']
+                                        .toLowerCase()
+                                        .contains(_userFinder))
                                     : snapshot['Usuarios'])
                                   ListTile(
                                     title: Text(usuario['Nombre'] +
@@ -441,8 +362,8 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                                 onPressed: () async {
                                                   await apiProvider
                                                       .UpdateOrganizationUser(
-                                                          widget.id,
-                                                          deleteUsers: [
+                                                      widget.id,
+                                                      deleteUsers: [
                                                         usuario['ID']
                                                       ]);
                                                   if (!context.mounted) return;
@@ -487,16 +408,16 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                 ),
                                 for (var cliente in _clientFinder != ""
                                     ? snapshot['Clientes'].where((element) =>
-                                        element['Nombre']
-                                            .toLowerCase()
-                                            .contains(
-                                                _clientFinder.toLowerCase()) ||
-                                        element['Apellido']
-                                            .toLowerCase()
-                                            .contains(
-                                                _clientFinder.toLowerCase()) ||
-                                        element['Email'].toLowerCase().contains(
-                                            _clientFinder.toLowerCase()))
+                                element['Nombre']
+                                    .toLowerCase()
+                                    .contains(
+                                    _clientFinder.toLowerCase()) ||
+                                    element['Apellido']
+                                        .toLowerCase()
+                                        .contains(
+                                        _clientFinder.toLowerCase()) ||
+                                    element['Email'].toLowerCase().contains(
+                                        _clientFinder.toLowerCase()))
                                     : snapshot['Clientes'])
                                   ListTile(
                                     title: Text(cliente['Nombre'] +
@@ -522,19 +443,19 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                                 actions: [
                                                   TextButton(
                                                     child:
-                                                        const Text('Cancelar'),
+                                                    const Text('Cancelar'),
                                                     onPressed: () =>
                                                         Navigator.of(context)
                                                             .pop(),
                                                   ),
                                                   TextButton(
                                                     child:
-                                                        const Text('Eliminar'),
+                                                    const Text('Eliminar'),
                                                     onPressed: () async {
                                                       try {
                                                         await apiProvider
                                                             .deleteOrganizationClient(
-                                                                cliente);
+                                                            cliente);
                                                         loadData();
                                                         if (!context.mounted)
                                                           return;
@@ -546,21 +467,21 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                                           context: context,
                                                           builder: (context) =>
                                                               AlertDialog(
-                                                            title: const Text(
-                                                                'Error'),
-                                                            content: Text(
-                                                                e.toString()),
-                                                            actions: [
-                                                              TextButton(
-                                                                child: const Text(
-                                                                    'Cerrar'),
-                                                                onPressed: () =>
-                                                                    Navigator.of(
+                                                                title: const Text(
+                                                                    'Error'),
+                                                                content: Text(
+                                                                    e.toString()),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    child: const Text(
+                                                                        'Cerrar'),
+                                                                    onPressed: () =>
+                                                                        Navigator.of(
                                                                             context)
-                                                                        .pop(),
+                                                                            .pop(),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                            ],
-                                                          ),
                                                         );
                                                       }
                                                     },
@@ -605,16 +526,16 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                 ),
                                 for (var proceso in _processFinder != ""
                                     ? snapshot['Procesos'].where((element) =>
-                                        element['Nombre']
-                                            .toLowerCase()
-                                            .contains(
-                                                _processFinder.toLowerCase()) ||
-                                        element['Foldername']
-                                            .toLowerCase()
-                                            .contains(
-                                                _processFinder.toLowerCase()) ||
-                                        element['Alias'].toLowerCase().contains(
-                                            _processFinder.toLowerCase()))
+                                element['Nombre']
+                                    .toLowerCase()
+                                    .contains(
+                                    _processFinder.toLowerCase()) ||
+                                    element['Foldername']
+                                        .toLowerCase()
+                                        .contains(
+                                        _processFinder.toLowerCase()) ||
+                                    element['Alias'].toLowerCase().contains(
+                                        _processFinder.toLowerCase()))
                                     : snapshot['Procesos'])
                                   ListTile(
                                       title: Text(proceso['Alias'] != ""
@@ -627,8 +548,8 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                         onPressed: () async {
                                           // Show a dialog to the user to confirm deletion
                                           TextEditingController _controller =
-                                              TextEditingController(
-                                                  text: proceso['Alias']);
+                                          TextEditingController(
+                                              text: proceso['Alias']);
                                           await showDialog(
                                             context: context,
                                             builder: (context) => AlertDialog(
@@ -636,7 +557,7 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                               content: TextField(
                                                 controller: _controller,
                                                 decoration:
-                                                    const InputDecoration(
+                                                const InputDecoration(
                                                   hintText: 'Alias',
                                                 ),
                                               ),
@@ -652,8 +573,8 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                                                   onPressed: () async {
                                                     await apiProvider
                                                         .updateOrganizationProcess(
-                                                            proceso['ID'],
-                                                            _controller.text);
+                                                        proceso['ID'],
+                                                        _controller.text);
                                                     if (!context.mounted)
                                                       return;
                                                     loadData();
@@ -684,11 +605,11 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
       onPressed: () async {
         // Show a dialog to the user to confirm deletion
         TextEditingController _NameController =
-            TextEditingController(text: cliente['Nombre']);
+        TextEditingController(text: cliente['Nombre']);
         TextEditingController _LastNameController =
-            TextEditingController(text: cliente['Apellido']);
+        TextEditingController(text: cliente['Apellido']);
         TextEditingController _EmailController =
-            TextEditingController(text: cliente['Email']);
+        TextEditingController(text: cliente['Email']);
         await showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -725,7 +646,7 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
                   child: const Text('Guardar'),
                   onPressed: () async {
                     var sucess =
-                        await apiProvider.CreateOrUpdateOrganizationClient({
+                    await apiProvider.CreateOrUpdateOrganizationClient({
                       'ID': cliente['ID'],
                       'Nombre': _NameController.text,
                       'Apellido': _LastNameController.text,
@@ -753,8 +674,7 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
     );
   }
 
-  Future<dynamic> AddClientDialog(
-      BuildContext context,
+  Future<dynamic> AddClientDialog(BuildContext context,
       TextEditingController _nameController,
       TextEditingController _lastNameController,
       TextEditingController _emailController,
@@ -816,8 +736,7 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
     organizationNotifier.value = oldValue;
   }
 
-  Future AddUserDialog(
-      BuildContext context,
+  Future AddUserDialog(BuildContext context,
       TextEditingController userFinderController,
       String userFinder,
       List<dynamic> value,
@@ -850,15 +769,15 @@ Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son
               ),
               for (var user in userFinder != ""
                   ? value.where((element) =>
-                      element['Nombre']
-                          .toLowerCase()
-                          .contains(userFinder.toLowerCase()) ||
-                      element['Apellido']
-                          .toLowerCase()
-                          .contains(userFinder.toLowerCase()) ||
-                      element['Email']
-                          .toLowerCase()
-                          .contains(userFinder.toLowerCase()))
+              element['Nombre']
+                  .toLowerCase()
+                  .contains(userFinder.toLowerCase()) ||
+                  element['Apellido']
+                      .toLowerCase()
+                      .contains(userFinder.toLowerCase()) ||
+                  element['Email']
+                      .toLowerCase()
+                      .contains(userFinder.toLowerCase()))
                   : value)
                 ListTile(
                     title: Text(user['Nombre'] + " " + user['Apellido']),

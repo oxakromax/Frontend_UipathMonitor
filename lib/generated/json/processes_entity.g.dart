@@ -62,9 +62,13 @@ ProcessesEntity $ProcessesEntityFromJson(Map<String, dynamic> json) {
   if (activeMonitoring != null) {
     processesEntity.activeMonitoring = activeMonitoring;
   }
-  final int? prioridad = jsonConvert.convert<int>(json['Prioridad']);
+  final int? prioridad = jsonConvert.convert<int>(json['Priority']);
   if (prioridad != null) {
     processesEntity.prioridad = prioridad;
+  }
+  final int? MaxQueueTime = jsonConvert.convert<int>(json['MaxQueueTime']);
+  if (prioridad != null) {
+    processesEntity.maxQueueTime = MaxQueueTime;
   }
   final ProcessesOrganizacion? organizacion =
       jsonConvert.convert<ProcessesOrganizacion>(json['Organizacion']);
@@ -106,7 +110,8 @@ Map<String, dynamic> $ProcessesEntityToJson(ProcessesEntity entity) {
   data['ErrorTolerance'] = entity.errorTolerance;
   data['FatalTolerance'] = entity.fatalTolerance;
   data['ActiveMonitoring'] = entity.activeMonitoring;
-  data['Prioridad'] = entity.prioridad;
+  data['Priority'] = entity.prioridad;
+  data['MaxQueueTime'] = entity.maxQueueTime;
   data['Organizacion'] = entity.organizacion?.toJson();
   data['IncidentesProceso'] =
       entity.incidentesProceso?.map((v) => v.toJson()).toList();
@@ -236,6 +241,10 @@ ProcessesIncidentesProceso $ProcessesIncidentesProcesoFromJson(
   if (tipo != null) {
     processesIncidentesProceso.tipo = tipo;
   }
+  final int? prioridad = jsonConvert.convert<int>(json['Prioridad']);
+  if (prioridad != null) {
+    processesIncidentesProceso.prioridad = prioridad;
+  }
   final String? estado = jsonConvert.convert<String>(json['Estado']);
   if (estado != null) {
     processesIncidentesProceso.estado = estado;
@@ -259,6 +268,7 @@ Map<String, dynamic> $ProcessesIncidentesProcesoToJson(
   data['Proceso'] = entity.proceso;
   data['Descripcion'] = entity.descripcion;
   data['Tipo'] = entity.tipo;
+  data['Prioridad'] = entity.prioridad;
   data['Estado'] = entity.estado;
   data['Detalles'] = entity.detalles?.map((v) => v.toJson()).toList();
   return data;
@@ -300,6 +310,10 @@ ProcessesIncidentesProcesoDetalles $ProcessesIncidentesProcesoDetallesFromJson(
   if (fechaFin != null) {
     processesIncidentesProcesoDetalles.fechaFin = fechaFin;
   }
+  final bool? isDiagnostic = jsonConvert.convert<bool>(json['IsDiagnostic']);
+  if (isDiagnostic != null) {
+    processesIncidentesProcesoDetalles.isDiagnostic = isDiagnostic;
+  }
   return processesIncidentesProcesoDetalles;
 }
 
@@ -314,6 +328,7 @@ Map<String, dynamic> $ProcessesIncidentesProcesoDetallesToJson(
   data['Detalle'] = entity.detalle;
   data['FechaInicio'] = entity.fechaInicio;
   data['FechaFin'] = entity.fechaFin;
+  data['IsDiagnostic'] = entity.isDiagnostic;
   return data;
 }
 

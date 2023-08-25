@@ -21,7 +21,7 @@ class IncidentDetailEditPage extends StatefulWidget {
 
 class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
   TextEditingController _detailsController = TextEditingController();
-  String _Status = "En Progreso";
+  String _Status = TicketsState.InProgress;
   late Connectivity _connectivity;
   Timer? _timer;
   bool _isConnected = true;
@@ -29,23 +29,32 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
   final DateTime _startDate = DateTime.now().toUtc();
   DateTime _endDate = DateTime.now().toUtc();
 
+  Map<String, dynamic> _TicketSettings = {};
+  bool _isDiagnostic = false;
+  String _type = "";
+
   @override
   void initState() {
     super.initState();
     _detailsController.text = "";
-    _Status = "En Progreso";
+    _Status = TicketsState.InProgress;
     _connectivity = Connectivity();
     _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
       if (result == ConnectivityResult.none) {
-        setState(() {
-          _isConnected = false;
-        });
+        _isConnected = false;
       } else {
-        setState(() {
-          _isConnected = true;
-        });
+        _isConnected = true;
       }
     });
+    Provider.of<ApiProvider>(context, listen: false)
+        .getTicketSettings(widget.incident.iD!)
+        .then((value) => {
+              setState(() {
+                _TicketSettings = value;
+                _isDiagnostic = _TicketSettings['needDiagnostic'];
+                _type = _TicketSettings['type'];
+              })
+            });
     _timer = Timer.periodic(const Duration(hours: 4), (timer) {
       _endDate = DateTime.now().toUtc();
       if (_isConnected) {
@@ -56,6 +65,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
           startDate: _startDate,
           endDate: _endDate,
           status: _Status,
+          isDiagnostic: _isDiagnostic,
         );
       } else {
         var MapOfOptions = {
@@ -64,6 +74,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
           'fechaInicio': DateFormat('yyyy-MM-dd HH:mm:ss').format(_startDate),
           'fechaFin': DateFormat('yyyy-MM-dd HH:mm:ss').format(_endDate),
           'estado': _Status,
+          'IsDiagnostic': _isDiagnostic,
         };
         Provider.of<GeneralProvider>(context, listen: false)
             .saveLocalProgress(MapOfOptions);
@@ -88,7 +99,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Incidente'),
+        title: const Text('Editar Ticket'),
       ),
       body: SingleChildScrollView(
         child: _buildIncidentDetailEdit(context),
@@ -110,11 +121,17 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("ID: ${widget.incident.iD}",
+          Text("Identificador de Ticket: ${widget.incident.iD}",
               style: const TextStyle(fontSize: 20)),
           const SizedBox(height: 8),
-          Text('Incidente: ${widget.incident.descripcion}',
+          Text('Descripción: ${widget.incident.descripcion}',
               style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 8),
+          Text(
+              'Actividad actual: ${_isDiagnostic ? "Diagnóstico" : "Progreso"}',
+              style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 8),
+          Text('Tipo: $_type', style: const TextStyle(fontSize: 20)),
           const SizedBox(height: 20),
           const Text("Tiempo transcurrido: ",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -138,12 +155,12 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
               );
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           const Text(
-            'Detalles del incidente',
+            'Detalles de la actividad',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           TextField(
             controller: _detailsController,
             decoration: const InputDecoration(
@@ -152,24 +169,26 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
             ),
             maxLines: null,
           ),
-          const SizedBox(height: 20),
-          const Text(
-            'Estado del incidente',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          DropdownButton<String>(
-            value: _Status,
-            onChanged: (String? newValue) {
-              setState(() {
-                _Status = newValue!;
-              });
-            },
-            items: const <DropdownMenuItem<String>>[
-              DropdownMenuItem<String>(
-                value: TicketsState.InProgress,
-                child: Text(TicketsState.InProgress),
-              ),
+          if (!_isDiagnostic) const SizedBox(height: 20),
+          if (!_isDiagnostic)
+            const Text(
+              'Estado del ticket',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          if (!_isDiagnostic) const SizedBox(height: 8),
+          if (!_isDiagnostic)
+            DropdownButton<String>(
+              value: _Status,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _Status = newValue!;
+                });
+              },
+              items: const <DropdownMenuItem<String>>[
+                DropdownMenuItem<String>(
+                  value: TicketsState.InProgress,
+                  child: Text(TicketsState.InProgress),
+                ),
               DropdownMenuItem<String>(
                 value: TicketsState.Completed,
                 child: Text(TicketsState.Completed),
@@ -210,12 +229,13 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
                   updatedIncident =
                       await Provider.of<ApiProvider>(context, listen: false)
                           .PostIncidentDetails(
-                    context: context,
+                        context: context,
                     incidentId: widget.incident.iD!,
                     details: _detailsController.text,
                     startDate: _startDate,
                     endDate: _endDate,
                     status: _Status,
+                    isDiagnostic: _isDiagnostic,
                   );
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Se ha guardado el progreso'),
@@ -227,7 +247,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
               },
               child: const Text('Guardar cambios'),
               style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).primaryColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 textStyle: const TextStyle(fontSize: 18),

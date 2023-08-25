@@ -1,3 +1,4 @@
+import 'package:UipathMonitor/Constants/TicketsConst.dart';
 import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/Providers/GeneralProvider.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
@@ -24,9 +25,8 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
   final _errorEditController = TextEditingController();
   final _fatalEditController = TextEditingController();
   final _priorityEditController = TextEditingController();
+  final _maxQueueEditController = TextEditingController();
   final _AliasEditController = TextEditingController();
-  final _UserSearchController = TextEditingController();
-  final _ClientSearchController = TextEditingController();
   final _ScrollController = ScrollController();
   final _DataTableScrollController = ScrollController();
 
@@ -100,6 +100,8 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 '${snapshot.data?.fatalTolerance ?? ''}';
             _AliasEditController.text = '${snapshot.data?.alias ?? ''}';
             _priorityEditController.text = '${snapshot.data?.prioridad ?? ''}';
+            _maxQueueEditController.text =
+                '${snapshot.data?.maxQueueTime ?? ''}';
             _filteredIncidents = snapshot.data?.incidentesProceso ?? [];
             if (_incidentSearchController.text.isNotEmpty) {
               // Filter the incidents based on the search input
@@ -189,6 +191,8 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                       process.alias = _AliasEditController.text;
                       process.prioridad =
                           int.tryParse(_priorityEditController.text);
+                      process.maxQueueTime =
+                          int.tryParse(_maxQueueEditController.text);
                       try {
                         showDialog(
                           context: context,
@@ -237,7 +241,8 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 8),
-                  Text("Alias", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text("Alias",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   // Box to edit the process alias
                   SizedBox(
@@ -290,7 +295,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                       showDialog(
                         context: context,
                         builder: (context) =>
-                            const Center(child: CircularProgressIndicator()),
+                        const Center(child: CircularProgressIndicator()),
                       );
                       await Provider.of<ApiProvider>(context, listen: false)
                           .UpdateProcess(process);
@@ -333,8 +338,8 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Priority: ',
+                const Text(
+                  'Prioridad: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -370,12 +375,68 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                   )
                 else
                   Text(
-                    '${process.prioridad ?? ''}',
+                    '${process.prioridad ?? 'No definida'}',
                     textAlign: TextAlign.right,
                     overflow: TextOverflow.ellipsis,
                     // style: TextStyle(fontWeight: FontWeight.bold),
                   ),
               ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Tiempo maximo de espera: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                // si está en modo edición, mostrar el TextFormField, sino mostrar el valor
+                if (_Editting)
+                  SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: TextFormField(
+                      // max value: 10
+                      controller: _maxQueueEditController,
+                      enabled: _Editting,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      // onChanged: (value) {
+                      //   setState(() {});
+                      // },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a value';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                        if (int.tryParse(value)! > 120) {
+                          return 'Please enter a number between 0 and 120';
+                        }
+                        return null;
+                      },
+                    ),
+                  )
+                else
+                  Text(
+                    '${process.maxQueueTime ?? 'No definida'}',
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                    // style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tolerancias',
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
@@ -384,14 +445,14 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: const [
+                      const Row(
+                        children: [
                           Icon(Icons.warning, color: Colors.yellow),
                           SizedBox(width: 8),
                           Text(
-                            'Warning Tolerance:',
+                            'Warning:',
                             style: TextStyle(fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
+                            overflow: TextOverflow.fade,
                           ),
                         ],
                       ),
@@ -411,13 +472,14 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: const [
+                      const Row(
+                        children: [
                           Icon(Icons.error, color: Colors.red),
                           SizedBox(width: 8),
                           Text(
-                            'Error Tolerance:',
+                            'Error:',
                             style: TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -437,13 +499,15 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: const [
+                      const Row(
+                        children: [
                           Icon(Icons.cancel, color: Colors.black),
                           SizedBox(width: 8),
                           Text(
-                            'Fatal Tolerance:',
+                            'Fatal:',
                             style: TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.fade,
+                            softWrap: true,
                           ),
                         ],
                       ),
@@ -519,9 +583,9 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                   DataColumn(label: Flexible(child: Text('Acciones'))),
                 ],
                 source: IncidentDataSource(context, process, _filteredIncidents,
-                    () {
-                  RefreshScaffold(context);
-                }),
+                        () {
+                      RefreshScaffold(context);
+                    }),
               ),
             )
           ],
@@ -546,11 +610,11 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
   String _getIncidentStateText(int state) {
     switch (state) {
       case 1:
-        return 'Iniciado';
+        return TicketsState.Started;
       case 2:
-        return 'En progreso';
+        return TicketsState.InProgress;
       case 3:
-        return 'Completado';
+        return TicketsState.Completed;
       default:
         return 'Desconocido';
     }
@@ -581,9 +645,9 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               SizedBox(
                 height: 70 *
                     (process.usuarios?.length != null &&
-                                process.usuarios!.length < 5
-                            ? process.usuarios?.length ?? 1
-                            : 5)
+                        process.usuarios!.length < 5
+                        ? process.usuarios?.length ?? 1
+                        : 5)
                         .toDouble(),
                 child: ListView(
                   physics: const NeverScrollableScrollPhysics(),
@@ -698,12 +762,12 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
   }
 
   Widget _buildHelpMenu() {
-    return Card(
+    return const Card(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
               'Ayuda:',
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -725,13 +789,11 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
   // the list of users is obtained from the API via GetUsersPossibleForProcess and it's returns list<ProcessesUsuarios>
 
   // start code
-  Future<void> _addUserDialog(
-    BuildContext context,
-    ProcessesEntity process,
-  ) async {
+  Future<void> _addUserDialog(BuildContext context,
+      ProcessesEntity process,) async {
     final List<ProcessesUsuarios>? users =
-        await Provider.of<ApiProvider>(context, listen: false)
-            .getUsersPossibleForProcess(process.iD);
+    await Provider.of<ApiProvider>(context, listen: false)
+        .getUsersPossibleForProcess(process.iD);
     final List<ProcessesUsuarios> selectedUsers = <ProcessesUsuarios>[];
 
     if (!context.mounted) return;
@@ -829,11 +891,10 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     );
   }
 
-  Future<void> _addClientDialog(
-      BuildContext context, ProcessesEntity process) async {
+  Future<void> _addClientDialog(BuildContext context, ProcessesEntity process) async {
     final List<ProcessesClientes>? clients =
-        await Provider.of<ApiProvider>(context, listen: false)
-            .getClientsPossibleForProcess(process.iD);
+    await Provider.of<ApiProvider>(context, listen: false)
+        .getClientsPossibleForProcess(process.iD);
     final List<ProcessesClientes> selectedClients = <ProcessesClientes>[];
 
     if (!context.mounted) return;
@@ -936,10 +997,10 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     String message;
     if (users.length == 1) {
       message =
-          '¿Está seguro que desea eliminar a ${users[0].nombre} ${users[0].apellido} del proceso?';
+      '¿Está seguro que desea eliminar a ${users[0].nombre} ${users[0].apellido} del proceso?';
     } else {
       message =
-          '¿Está seguro que desea eliminar a ${users.length} usuarios del proceso?';
+      '¿Está seguro que desea eliminar a ${users.length} usuarios del proceso?';
     }
     return showDialog<void>(
       context: context,
@@ -984,10 +1045,10 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
     String message;
     if (client.length == 1) {
       message =
-          '¿Está seguro que desea eliminar a ${client[0].nombre} ${client[0].apellido} del proceso?';
+      '¿Está seguro que desea eliminar a ${client[0].nombre} ${client[0].apellido} del proceso?';
     } else {
       message =
-          '¿Está seguro que desea eliminar a ${client.length} clientes del proceso?';
+      '¿Está seguro que desea eliminar a ${client.length} clientes del proceso?';
     }
     return showDialog<void>(
       context: context,

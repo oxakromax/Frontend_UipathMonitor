@@ -2,8 +2,8 @@
 
 class TicketsState {
   static const String Started = 'Iniciado';
-  static const String InProgress = 'En progreso';
-  static const String Completed = 'Completado';
+  static const String InProgress = 'En Progreso';
+  static const String Completed = 'Finalizado';
 }
 
 class TicketsType {

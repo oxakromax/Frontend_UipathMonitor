@@ -1,3 +1,4 @@
+import 'package:UipathMonitor/Constants/ApiEndpoints.dart';
 import 'package:UipathMonitor/pages/Client/ticket_form_page.dart';
 import 'package:UipathMonitor/pages/first_menu_page.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import 'pages/User/ProfilePage.dart';
 import 'pages/User/incidentsUser/incident_management_page.dart';
 import 'pages/login_page.dart';
 
-void main() {
+void main() async {
   runApp(
     MultiProvider(
       providers: [
@@ -21,7 +22,7 @@ void main() {
           create: (context) => GeneralProvider(),
         ),
         ChangeNotifierProxyProvider<GeneralProvider, ApiProvider>(
-          create: (context) => ApiProvider("http://localhost:8080", ""),
+          create: (context) => ApiProvider(ApiEndpoints.BaseUrl, ""),
           update: (context, generalProvider, apiProvider) {
             apiProvider?.updateToken(generalProvider.token);
             return apiProvider!;

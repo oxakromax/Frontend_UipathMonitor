@@ -33,8 +33,10 @@ class ProcessesEntity {
   int? fatalTolerance;
   @JSONField(name: "ActiveMonitoring")
   bool? activeMonitoring;
-  @JSONField(name: "Prioridad")
+  @JSONField(name: "Priority")
   int? prioridad;
+  @JSONField(name: "MaxQueueTime")
+  int? maxQueueTime;
   @JSONField(name: "Organizacion")
   ProcessesOrganizacion? organizacion;
   @JSONField(name: "IncidentesProceso")
@@ -67,6 +69,7 @@ class ProcessesEntity {
       int? fatalTolerance,
       bool? activeMonitoring,
       int? prioridad,
+      int? maxQueueTime,
       ProcessesOrganizacion? organizacion,
       List<ProcessesIncidentesProceso>? incidentesProceso,
       List<ProcessesClientes>? clientes,
@@ -87,6 +90,7 @@ class ProcessesEntity {
       ..fatalTolerance = fatalTolerance ?? this.fatalTolerance
       ..activeMonitoring = activeMonitoring ?? this.activeMonitoring
       ..prioridad = prioridad ?? this.prioridad
+      ..maxQueueTime = maxQueueTime ?? this.maxQueueTime
       ..organizacion = organizacion ?? this.organizacion
       ..incidentesProceso = incidentesProceso ?? this.incidentesProceso
       ..clientes = clientes ?? this.clientes
@@ -193,6 +197,8 @@ class ProcessesIncidentesProceso {
   String? descripcion;
   @JSONField(name: "Tipo")
   int? tipo;
+  @JSONField(name: "Prioridad")
+  int? prioridad;
   @JSONField(name: "Estado")
   String? estado;
   @JSONField(name: "Detalles")
@@ -214,6 +220,7 @@ class ProcessesIncidentesProceso {
       dynamic proceso,
       String? incidente,
       int? tipo,
+      int? prioridad,
       String? estado,
       List<ProcessesIncidentesProcesoDetalles>? detalles}) {
     return ProcessesIncidentesProceso()
@@ -225,6 +232,7 @@ class ProcessesIncidentesProceso {
       ..proceso = proceso ?? this.proceso
       ..descripcion = incidente ?? this.descripcion
       ..tipo = tipo ?? this.tipo
+      ..prioridad = prioridad ?? this.prioridad
       ..estado = estado ?? this.estado
       ..detalles = detalles ?? this.detalles;
   }
@@ -253,6 +261,8 @@ class ProcessesIncidentesProcesoDetalles {
   String? fechaInicio;
   @JSONField(name: "FechaFin")
   String? fechaFin;
+  @JSONField(name: "IsDiagnostic")
+  bool? isDiagnostic;
 
   ProcessesIncidentesProcesoDetalles();
 
@@ -271,7 +281,8 @@ class ProcessesIncidentesProcesoDetalles {
       int? incidenteID,
       String? detalle,
       String? fechaInicio,
-      String? fechaFin}) {
+      String? fechaFin,
+      bool? isDiagnostic}) {
     return ProcessesIncidentesProcesoDetalles()
       ..iD = iD ?? this.iD
       ..createdAt = createdAt ?? this.createdAt
@@ -280,7 +291,8 @@ class ProcessesIncidentesProcesoDetalles {
       ..incidenteID = incidenteID ?? this.incidenteID
       ..detalle = detalle ?? this.detalle
       ..fechaInicio = fechaInicio ?? this.fechaInicio
-      ..fechaFin = fechaFin ?? this.fechaFin;
+      ..fechaFin = fechaFin ?? this.fechaFin
+      ..isDiagnostic = isDiagnostic ?? this.isDiagnostic;
   }
 
   @override

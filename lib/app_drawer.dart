@@ -31,7 +31,7 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.list),
-            title: const Text('Gestión de incidentes'),
+            title: const Text('Gestión de tickets'),
             onTap: () {
               RouteNavigator(context, '/user/incidents');
             },

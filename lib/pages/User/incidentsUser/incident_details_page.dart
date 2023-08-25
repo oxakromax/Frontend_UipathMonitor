@@ -1,4 +1,5 @@
 import 'package:UipathMonitor/Constants/TicketsConst.dart';
+import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,9 +12,10 @@ class IncidentDetailsScreen extends StatefulWidget {
   ProcessesEntity ProcessClass;
   final Function? onIncidentUpdated;
 
-  IncidentDetailsScreen({required this.incident,
-    this.onIncidentUpdated,
-    required this.ProcessClass});
+  IncidentDetailsScreen(
+      {required this.incident,
+      this.onIncidentUpdated,
+      required this.ProcessClass});
 
   @override
   _IncidentDetailsScreenState createState() => _IncidentDetailsScreenState();
@@ -21,7 +23,15 @@ class IncidentDetailsScreen extends StatefulWidget {
 
 class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
   final mapExpanded =
-  <bool>[]; // Lista de booleanos para saber si un elemento está expandido
+      <bool>[]; // Lista de booleanos para saber si un elemento está expandido
+
+  Map<String, int> TipoIncidente = {
+    TicketsType.Incident: 1,
+    TicketsType.Improvement: 2,
+    TicketsType.Maintenance: 3,
+    TicketsType.Other: 4,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +39,22 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
       mapExpanded.add(false);
     }
     if (mapExpanded.isNotEmpty) mapExpanded[0] = true;
+    Provider.of<ApiProvider>(context, listen: false)
+        .getTicketsType()
+        .then((value) => {
+              setState(() {
+                TipoIncidente = value;
+              })
+            });
+  }
+
+  String _getIncidentTipoText(int tipo) {
+    for (var item in TipoIncidente.entries) {
+      if (item.value == tipo) {
+        return item.key;
+      }
+    }
+    return 'Desconocido';
   }
 
   @override
@@ -54,27 +80,28 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     builder: (context) =>
                         IncidentDetailEditPage(incident: widget.incident),
                   ),
-          );
+                );
 
-          // Si el resultado no es nulo, actualiza el incidente
-          if (updatedIncident != null) {
-            setState(() {
-              widget.incident = updatedIncident;
-            });
+                // Si el resultado no es nulo, actualiza el incidente
+                if (updatedIncident != null) {
+                  setState(() {
+                    widget.incident = updatedIncident;
+                  });
 
-            // Llama a la función onIncidentUpdated si está presente
-            if (widget.onIncidentUpdated != null) {
-              widget.onIncidentUpdated!();
-            }
-          }
-        },
-        child: const Icon(Icons.edit),
-      )
+                  // Llama a la función onIncidentUpdated si está presente
+                  if (widget.onIncidentUpdated != null) {
+                    widget.onIncidentUpdated!();
+                  }
+                }
+              },
+              child: const Icon(Icons.edit),
+            )
           : null,
     );
   }
 
-  Widget _buildIncidentDetails(BuildContext context, BoxConstraints constraints) {
+  Widget _buildIncidentDetails(
+      BuildContext context, BoxConstraints constraints) {
     // Formateador de duración amigable
     String formatDuration(Duration duration) {
       String twoDigits(int n) => n.toString().padLeft(2, "0");
@@ -120,18 +147,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
               ),
               ListTile(
                 title: const Text('Tipo'),
-                // widget.incident.tipo
-                //     "Incidente": 1,
-                // "Mejora": 2,
-                // "Mantenimiento": 3,
-                // "Otro": 4,
-                subtitle: Text(widget.incident.tipo == 1
-                    ? 'Incidente'
-                    : (widget.incident.tipo == 2)
-                    ? 'Mejora'
-                    : (widget.incident.tipo == 3)
-                    ? 'Mantenimiento'
-                    : 'Otro'),
+                subtitle: Text(_getIncidentTipoText(widget.incident.tipo ?? 0)),
               ),
               ListTile(
                 title: const Text('Estado'),
@@ -229,7 +245,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                         const Icon(Icons.tag),
                         const SizedBox(width: 8),
                         Text(
-                            '${widget.incident.detalles!.indexOf(detail) + 1} ${widget.incident.detalles!.indexOf(detail) == 0 ? '(Inicio)' : widget.incident.detalles!.indexOf(detail) != 0 && widget.incident.detalles!.indexOf(detail) != widget.incident.detalles!.length - 1 ? '(Proceso)' : widget.incident.estado == "Finalizado" ? '(Fin)' : '(Proceso)'}'),
+                            '${widget.incident.detalles!.indexOf(detail) + 1} ${detail.isDiagnostic == true ? '(Diagnostico)' : widget.incident.detalles!.indexOf(detail) == 0 ? '(Inicio)' : widget.incident.detalles!.indexOf(detail) != 0 && widget.incident.detalles!.indexOf(detail) != widget.incident.detalles!.length - 1 ? '(Proceso)' : widget.incident.estado == "Finalizado" ? '(Fin)' : '(Proceso)'}'),
                         const Spacer(),
                         const Icon(Icons.timer),
                         const SizedBox(width: 4),
