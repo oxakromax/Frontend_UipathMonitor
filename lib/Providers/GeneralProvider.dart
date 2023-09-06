@@ -46,42 +46,47 @@ class GeneralProvider with ChangeNotifier {
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       // Check first to "/pingAuth" if the user is logged in, if response is 200 is logged, if is 401 is not logged
       // if not logged, try to login, if login is success, set the token, if not cancel the timer
-      if (_token == "") {
-        timer.cancel();
-        return;
-      }
-      var request =
-          ApiEndpoints.getHttpRequest(ApiEndpoints.PingAuth, headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_token',
-      });
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        return;
-      }
-      // Route Auth
-      request = ApiEndpoints.getHttpRequest(ApiEndpoints.Login, headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }, bodyFields: {
-        'email': _userMap['user'] ?? '',
-        'password': _userMap['pass'] ?? '',
-      });
-      response = await request.send();
-      if (response.statusCode == 200) {
-        var responseString = await response.stream.bytesToString();
-        var jsonResponse = jsonDecode(responseString);
-        setToken(jsonResponse['token']);
-        // refresh User
-        var user = await fetchProfile();
-        if (user != null) {
-          setUser(user);
+      try {
+        if (_token == "") {
+          timer.cancel();
+          return;
         }
-      } else if // connection refused or internet connection lost
-          (response.statusCode == 401) {
+        var request =
+            ApiEndpoints.getHttpRequest(ApiEndpoints.PingAuth, headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $_token',
+        });
+        http.StreamedResponse response = await request.send();
+
+        if (response.statusCode == 200) {
+          return;
+        }
+        // Route Auth
+        request = ApiEndpoints.getHttpRequest(ApiEndpoints.Login, headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }, bodyFields: {
+          'email': _userMap['user'] ?? '',
+          'password': _userMap['pass'] ?? '',
+        });
+        response = await request.send();
+        if (response.statusCode == 200) {
+          var responseString = await response.stream.bytesToString();
+          var jsonResponse = jsonDecode(responseString);
+          setToken(jsonResponse['token']);
+          // refresh User
+          var user = await fetchProfile();
+          if (user != null) {
+            setUser(user);
+          }
+        } else if // connection refused or internet connection lost
+            (response.statusCode == 401) {
+          return;
+        } else {
+          setToken('');
+        }
+      } catch (e) {
+        // ignore: avoid_print
         return;
-      } else {
-        setToken('');
       }
     });
   }

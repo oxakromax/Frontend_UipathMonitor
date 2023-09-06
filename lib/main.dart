@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         '/user/profile': (context) => generalProvider.token == ""
             ? const LoginPage(key: Key('login'))
             : ProfilePage(),
-        '/user/incidents': (context) => const IncidentManagementPage(),
+        '/user/tickets': (context) => const IncidentManagementPage(),
         '/forgot': (context) => ForgotPasswordPage(),
         '/admin/organization': (context) => OrganizationListScreen(),
         '/admin/users': (context) => const UsersListPage(),

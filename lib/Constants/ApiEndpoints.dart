@@ -19,9 +19,9 @@ class ApiEndpoints {
     "GET"
   ];
   static const List<String> GetUserProcesses = ["/user/processes", "GET"];
-  static const List<String> GetUserIncidents = ["/user/incidents", "GET"];
+  static const List<String> GetUserTickets = ["/user/tickets", "GET"];
   static const List<String> PostIncidentDetails = [
-    "/user/incidents/details",
+    "/user/tickets/details",
     "POST"
   ];
   static const List<String> DeleteUser = ["/admin/users", "DELETE"];
@@ -86,8 +86,8 @@ class ApiEndpoints {
     "/user/processes/:id/possibleClients",
     "GET"
   ];
-  static const List<String> NewIncident = [
-    "/user/processes/:id/newIncident",
+  static const List<String> NewTicket = [
+    "/user/processes/:id/newTicket",
     "POST"
   ];
   static const List<String> GetClientTicket = ["/client/tickets", "GET"];
@@ -98,7 +98,7 @@ class ApiEndpoints {
   ];
   static const List<String> GetUserData = ["/admin/downloads/users", "GET"];
   static const List<String> GetTicketSettings = [
-    "/user/incidents/details",
+    "/user/tickets/details",
     "GET"
   ];
   static const List<String> GetTicketsType = [

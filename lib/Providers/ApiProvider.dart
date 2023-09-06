@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:UipathMonitor/Constants/ApiEndpoints.dart';
 import 'package:UipathMonitor/classes/processes_entity.dart';
 import 'package:UipathMonitor/classes/user_entity.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+
 import '../classes/organization_entity.dart';
 
 class ApiProvider with ChangeNotifier {
@@ -423,7 +424,7 @@ class ApiProvider with ChangeNotifier {
     // Crea una solicitud de tipo multipart
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('$_baseUrl/user/incidents/details'),
+      Uri.parse('$_baseUrl/user/tickets/details'),
     );
 
     // Agrega los encabezados necesarios
@@ -455,8 +456,7 @@ class ApiProvider with ChangeNotifier {
   Future<Response> addNewIncident(ProcessesIncidentesProceso incidente) {
     // /user/processes/:id/newIncident
     return http.post(
-        Uri.parse(
-            '$_baseUrl/user/processes/${incidente.procesoID}/newIncident'),
+        Uri.parse('$_baseUrl/user/processes/${incidente.procesoID}/newTicket'),
         headers: _standartHeader(),
         body: jsonEncode(incidente.toJson()));
   }

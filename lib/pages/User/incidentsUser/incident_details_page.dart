@@ -70,7 +70,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
       ),
       floatingActionButton: widget.incident.estado != "Finalizado" &&
               Provider.of<GeneralProvider>(context, listen: false)
-                  .isAuthorized('/user/incidents/details')
+                  .isAuthorized('/user/tickets/details')
           ? FloatingActionButton(
               onPressed: () async {
                 // Navega a la pantalla de edición y espera el resultado

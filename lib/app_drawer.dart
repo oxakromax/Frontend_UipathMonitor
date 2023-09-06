@@ -33,7 +33,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.list),
             title: const Text('Gestión de tickets'),
             onTap: () {
-              RouteNavigator(context, '/user/incidents');
+              RouteNavigator(context, '/user/tickets');
             },
           ),
           if (isAuthorized(context, '/admin/organization'))

@@ -19,23 +19,23 @@ class IncidentManagementPage extends StatefulWidget {
 }
 
 class _IncidentManagementPageState extends State<IncidentManagementPage> {
-  late Future<IncidentsEntity> futureIncidents;
+  late Future<IncidentsEntity> futureTickets;
 
   @override
   void initState() {
     super.initState();
-    futureIncidents = _fetchIncidents();
+    futureTickets = _fetchTickets();
   }
 
   void updateIncidents() {
     setState(() {
-      futureIncidents = _fetchIncidents();
+      futureTickets = _fetchTickets();
     });
   }
 
-  Future<IncidentsEntity> _fetchIncidents() async {
+  Future<IncidentsEntity> _fetchTickets() async {
     var request = ApiEndpoints.getHttpRequest(
-      ApiEndpoints.GetUserIncidents,
+      ApiEndpoints.GetUserTickets,
       headers: {
         'Authorization':
             'Bearer ${Provider.of<GeneralProvider>(context, listen: false).token}'
@@ -85,7 +85,7 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
                 });
             // Update incidents
             updateIncidents();
-            futureIncidents.then((value) => {
+            futureTickets.then((value) => {
                   // Close dialog
                   Navigator.pop(context),
                   // Show snackbar
@@ -100,7 +100,7 @@ class _IncidentManagementPageState extends State<IncidentManagementPage> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: FutureBuilder<IncidentsEntity>(
-          future: futureIncidents,
+          future: futureTickets,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               IncidentsEntity incidents = snapshot.data!;
