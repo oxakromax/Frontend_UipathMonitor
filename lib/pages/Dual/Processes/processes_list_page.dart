@@ -2,8 +2,8 @@ import 'package:UipathMonitor/Providers/ApiProvider.dart';
 import 'package:UipathMonitor/Providers/GeneralProvider.dart';
 import 'package:UipathMonitor/pages/Dual/Processes/processes_view_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart'; // Esta línea ya estaba importada
 import 'package:provider/provider.dart';
+
 import '../../../app_drawer.dart';
 
 class ProcessesListPage extends StatefulWidget {
@@ -147,16 +147,18 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                               color: _isSelectedList[index]
                                   ? Colors.blue.withOpacity(0.5)
                                   : null,
+                              elevation: 5,
                               child: ListTile(
                                 title: Text(processName),
                                 subtitle:
                                     Text(folderName + ' - ' + organizationName),
-                                trailing: _isSelectedList[index]
-                                    ? Row(
+                                trailing: _isAnyItemSelected
+                                    ? null
+                                    : Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
-                                            icon: Icon(Icons.edit),
+                                            icon: const Icon(Icons.edit),
                                             onPressed: () {
                                               Navigator.push(context,
                                                   MaterialPageRoute(
@@ -174,8 +176,7 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                                             },
                                           ),
                                         ],
-                                      )
-                                    : null,
+                                      ),
                               ),
                             ),
                           );

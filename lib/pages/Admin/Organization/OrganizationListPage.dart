@@ -22,7 +22,7 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-        title: Text('Organizations'),
+        title: Text('Gestión de organizaciones'),
       ),
       body: Column(
         children: [
@@ -31,7 +31,7 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search organizations...',
+                hintText: 'Buscar organización...',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
@@ -64,7 +64,12 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
                     itemBuilder: (context, index) {
                       final org = organizations[index];
                       return Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         child: ListTile(
+                          leading: Icon(Icons.business),
                           title: Text(org.nombre!),
                           subtitle: Text(org.uipathname!),
                           onTap: () {

@@ -43,7 +43,7 @@ class _TicketFormPageState extends State<TicketFormPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor ingrese su emai';
+                      return 'Por favor ingrese su email';
                     }
                     return null;
                   },

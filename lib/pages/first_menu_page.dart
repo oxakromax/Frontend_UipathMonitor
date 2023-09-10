@@ -14,7 +14,7 @@ class FirstMenuPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '¿Qué tipo de usuario es usted?',
+              '¿Cuál es su rol?',
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(height: 30),

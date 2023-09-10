@@ -56,13 +56,13 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
                 true)
               FloatingActionButton(
                 heroTag: 'downloadData',
-                tooltip: 'Download Data',
+                tooltip: 'Descargar Info.',
                 child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.download_rounded),
-                    Text("Download Data",
+                    Text("Descargar Info.",
                         style: TextStyle(fontSize: 10),
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis),
@@ -96,13 +96,13 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
             const SizedBox(width: 10),
             FloatingActionButton(
               heroTag: 'editOrg',
-              tooltip: 'Edit Organization',
+              tooltip: 'Editar Organización',
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.edit),
-                  Text("Edit Organization",
+                  Text("Editar Organización",
                       style: TextStyle(fontSize: 10),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis),
@@ -126,14 +126,14 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
             SizedBox(
               child: FloatingActionButton(
                   heroTag: 'addClient',
-                  tooltip: 'Add Client',
+                  tooltip: 'Agregar Cliente',
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     textDirection: TextDirection.ltr,
                     children: [
                       Icon(Icons.person_add),
-                      Text("Add Client",
+                      Text("Agregar Cliente",
                           style: TextStyle(fontSize: 10),
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis),
@@ -149,14 +149,14 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
             SizedBox(
               child: FloatingActionButton(
                   heroTag: 'addUser',
-                  tooltip: 'Add User',
+                  tooltip: 'Agregar Usuario',
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     textDirection: TextDirection.ltr,
                     children: [
                       Icon(Icons.person_add_alt_1_sharp),
-                      Text("Add User",
+                      Text("Agregar Usuario",
                           style: TextStyle(fontSize: 10),
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis),
@@ -180,13 +180,13 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
             const SizedBox(width: 10),
             FloatingActionButton(
               heroTag: 'deleteOrganization',
-              tooltip: 'Delete Organization',
+              tooltip: 'Eliminar Organización',
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.delete),
-                  Text('Delete',
+                  Text('Eliminar Organización',
                       style: TextStyle(fontSize: 10),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis),
@@ -222,7 +222,7 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
           ],
         ),
         appBar: AppBar(
-          title: const Text('Organization Details'),
+          title: const Text('Detalles de la Organización'),
           actions: [
             // Hint button
             IconButton(
@@ -242,20 +242,20 @@ class _OrganizationDetailsPageState extends State<OrganizationDetailsPage> {
                         children: [
                           TextSpan(
                               text:
-                              '''Esta pantalla muestra información sobre la organización seleccionada.\n\n'''),
+                                  '''Esta pantalla muestra información sobre la organización seleccionada.\n\n'''),
                           TextSpan(
                               text: '''Sobre los usuarios y clientes:\n''',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           TextSpan(
                               text:
-                              '''Recuerda que si eliminas a un usuario o cliente de la organización, lo eliminarás de todos los procesos asociados a la misma. En el caso del cliente, este será eliminado de manera permanente.
-Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son agregados por proceso a la organización.\n\n'''),
+                                  '''Recuerda que si eliminas a un usuario o cliente de la organización, lo eliminarás de todos los procesos asociados a la misma. En el caso del cliente, este será eliminado de manera permanente.
+Por otra parte, en esta pantalla podrás agregar clientes, pero los usuarios son agregados para posteriormente ser asignados por proceso a la organización, por lo tanto solo estarás otorgando el derecho a ser asignado a un proceso dentro de la organización y no al proceso en si.\n\n'''),
                           TextSpan(
                               text: '''Sobre los procesos:\n''',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           TextSpan(
                               text:
-                              '''Los procesos son inmutables, es decir, no se pueden eliminar, solo asignarles un "Alias" para identificarlos. ya que estos son automaticamente obtenidos desde el Orchestrator de UiPath.'''),
+                                  '''Los procesos son inmutables, es decir, no se pueden eliminar, solo asignarles un "Alias" para identificarlos. ya que estos son automaticamente obtenidos desde el Orchestrator de UiPath.'''),
                         ],
                       ),
                     ),

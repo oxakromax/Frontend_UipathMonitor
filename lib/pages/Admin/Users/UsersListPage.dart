@@ -120,51 +120,57 @@ class _UsersListPageState extends State<UsersListPage> {
         user.iD) {
       return const SizedBox();
     }
-    return ListTile(
+    return Card(
+      elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
-        side: BorderSide(
-          color: isSelected ? Colors.blue : Colors.transparent,
-          width: 2,
+      ),
+      child: ListTile(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(
+            color: isSelected ? Colors.blue : Colors.transparent,
+            width: 2,
+          ),
         ),
-      ),
-      contentPadding: const EdgeInsets.all(8),
-      leading: Checkbox(
-        value: isSelected,
-        onChanged: (value) {
-          setState(() {
-            if (value ?? false) {
-              _selectedUsers.add(user);
-            } else {
-              _selectedUsers.removeWhere((element) => element.iD == user.iD);
-            }
-          });
-        },
-      ),
-      title: Text('${user.nombre} ${user.apellido}'),
-      subtitle: Text(user.email ?? ''),
-      trailing: // Edit button
-          Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Edit Roles button
-          IconButton(
-            tooltip: 'Editar roles',
-            onPressed: () {
-              // Implementa aquí el diálogo de edición de roles del usuario.
-              // Por ejemplo, puedes llamar a la función editUserRolesDialog (que aún no has creado) de la siguiente manera:
-              editUserRolesDialog(context, user);
-            },
-            icon: const Icon(Icons.settings),
-          ),
-          // Edit user button
-          IconButton(
-            onPressed: () {
-              editUserDialog(context, user);
-            },
-            icon: const Icon(Icons.edit),
-          ),
-        ],
+        contentPadding: const EdgeInsets.all(8),
+        leading: Checkbox(
+          value: isSelected,
+          onChanged: (value) {
+            setState(() {
+              if (value ?? false) {
+                _selectedUsers.add(user);
+              } else {
+                _selectedUsers.removeWhere((element) => element.iD == user.iD);
+              }
+            });
+          },
+        ),
+        title: Text('${user.nombre} ${user.apellido}'),
+        subtitle: Text(user.email ?? ''),
+        trailing: // Edit button
+            Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Edit Roles button
+            IconButton(
+              tooltip: 'Editar roles',
+              onPressed: () {
+                // Implementa aquí el diálogo de edición de roles del usuario.
+                // Por ejemplo, puedes llamar a la función editUserRolesDialog (que aún no has creado) de la siguiente manera:
+                editUserRolesDialog(context, user);
+              },
+              icon: const Icon(Icons.settings),
+            ),
+            // Edit user button
+            IconButton(
+              onPressed: () {
+                editUserDialog(context, user);
+              },
+              icon: const Icon(Icons.edit),
+            ),
+          ],
+        ),
       ),
     );
   }

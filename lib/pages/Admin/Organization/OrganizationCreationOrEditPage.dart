@@ -62,7 +62,7 @@ class _OrganizationCreationOrEditPageState
     var apiProvider = Provider.of<ApiProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Organization${widget.isEditing ? ' Edit' : ' Creation'}'),
+        title: Text('${widget.isEditing ? ' Editar' : ' Crear'} Organización'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -76,14 +76,18 @@ class _OrganizationCreationOrEditPageState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            'Organization Name',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              'Nombre de la organización (No restrictivo)',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                              overflow: TextOverflow
+                                  .ellipsis, // Usa ellipsis para mostrar '...' si el texto no cabe
                             ),
                           ),
                           Tooltip(
@@ -171,8 +175,8 @@ class _OrganizationCreationOrEditPageState
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Row(
-                                    children: const [
+                                  title: const Row(
+                                    children: [
                                       Icon(Icons.error),
                                       SizedBox(width: 8),
                                       Text('Error'),
@@ -212,14 +216,17 @@ class _OrganizationCreationOrEditPageState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Text(
-              'Organization UiPath Name',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+          children: [
+            Flexible(
+              child: Text(
+                'Nombre de la organización en UiPath',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Tooltip(
@@ -233,11 +240,11 @@ class _OrganizationCreationOrEditPageState
           controller: _organizationUipathNameController,
         ),
         const SizedBox(height: 16),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Text(
-              'Organization Tenant Name',
+              'Nombre del Tenant en UiPath',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -254,11 +261,11 @@ class _OrganizationCreationOrEditPageState
           controller: _organizationTenantNameController,
         ),
         const SizedBox(height: 16),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Text(
-              'Organization App ID',
+              'App ID',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -275,11 +282,11 @@ class _OrganizationCreationOrEditPageState
           controller: _organizationAppIdController,
         ),
         const SizedBox(height: 16),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Text(
-              'Organization App Secret',
+              'App Secret',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -296,11 +303,11 @@ class _OrganizationCreationOrEditPageState
           controller: _organizationAppSecretController,
         ),
         const SizedBox(height: 16),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
+          children: [
             Text(
-              'Organization App Scope',
+              'App Scope',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -317,14 +324,17 @@ class _OrganizationCreationOrEditPageState
           controller: _organizationAppScopeController,
         ),
         const SizedBox(height: 16),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Text(
-              'Organization App URL',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+          children: [
+            Flexible(
+              child: Text(
+                'URL de la instancia de Orchestrator',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Tooltip(

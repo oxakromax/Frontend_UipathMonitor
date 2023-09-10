@@ -61,7 +61,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalles del Incidente'),
+        title: Text('Detalles de Ticket #${widget.incident.iD}'),
       ),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
