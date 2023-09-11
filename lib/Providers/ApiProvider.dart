@@ -358,7 +358,7 @@ class ApiProvider with ChangeNotifier {
   Future<List<ProcessesUsuarios>?> getUsersPossibleForProcess(int? iD) async {
     // /user/processes/:id/possibleUsers GET
     final request = http.Request(
-        'GET', Uri.parse('$_baseUrl/user/processes/$iD/possibleUsers'));
+        'GET', Uri.parse('$_baseUrl/admin/processes/$iD/possibleUsers'));
     request.headers.addAll(_standartHeader());
     final response = await request.send();
     if (response.statusCode != 200) {
@@ -372,7 +372,8 @@ class ApiProvider with ChangeNotifier {
   Future<Response> removeUserFromProcess(int? processID, userID) {
     // /user/processes/processID/users?users_id=userID DELETE
     return http.delete(
-        Uri.parse('$_baseUrl/user/processes/$processID/users?users_id=$userID'),
+        Uri.parse(
+            '$_baseUrl/admin/processes/$processID/users?users_id=$userID'),
         headers: _standartHeader());
   }
 
@@ -381,7 +382,7 @@ class ApiProvider with ChangeNotifier {
     // /user/processes/processID/users?users_id=1,2,3 POST
     return http.post(
         Uri.parse(
-            '$_baseUrl/user/processes/$iD/users?users_id=${selectedUsers.map((e) => e.iD).join(',')}'),
+            '$_baseUrl/admin/processes/$iD/users?users_id=${selectedUsers.map((e) => e.iD).join(',')}'),
         headers: _standartHeader());
   }
 
