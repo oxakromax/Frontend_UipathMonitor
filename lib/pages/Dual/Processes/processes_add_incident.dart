@@ -45,13 +45,14 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
           })
         });
     selectedTypeOfIncident = typeofIncident.keys.first;
+    ticketPriority = widget.process.prioridad ?? 5;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Ticket'),
+        title: const Text('Agregar Ticket'),
       ),
       body: SingleChildScrollView(
         // Wrap the content with SingleChildScrollView
@@ -62,11 +63,11 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  'Type of Ticket',
+                const Text(
+                  'Tipo de Ticket',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   value: selectedTypeOfIncident,
                   onChanged: (String? newValue) {
@@ -88,12 +89,12 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
-                Text(
-                  'Priority (1-10)',
+                const SizedBox(height: 20),
+                const Text(
+                  'Prioridad (1-10)',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 DropdownButtonFormField<int>(
                   value: ticketPriority,
                   onChanged: (int? newValue) {
@@ -101,7 +102,7 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
                       ticketPriority = newValue!;
                     });
                   },
-                  hint: Text('1 = Lowest Priority, 10 = Critical'),
+                  hint: const Text('1 = Lowest Priority, 10 = Critical'),
                   items: List.generate(10, (index) => index + 1)
                       .map<DropdownMenuItem<int>>((int value) {
                     return DropdownMenuItem<int>(
@@ -116,21 +117,21 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
-                Text(
-                  'Description',
+                const SizedBox(height: 20),
+                const Text(
+                  'Descripción',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText: 'Enter a description',
+                  decoration: const InputDecoration(
+                    hintText: 'Ingrese una descripción',
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a description';
+                      return 'Por favor ingrese una descripción';
                     }
                     return null;
                   },
@@ -138,7 +139,7 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
                     incidentDescription = value;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
@@ -155,7 +156,8 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return Center(child: CircularProgressIndicator());
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             });
                         Future<Response> response =
                             apiProvider.addNewIncident(NewIncident);
@@ -169,14 +171,14 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text('Error'),
+                                    title: const Text('Error'),
                                     content: Text(value.body),
                                     actions: [
                                       TextButton(
                                         onPressed: () {
                                           Navigator.pop(context);
                                         },
-                                        child: Text('Ok'),
+                                        child: const Text('Ok'),
                                       ),
                                     ],
                                   );
@@ -185,7 +187,7 @@ class _ProcessesAddIncidentState extends State<ProcessesAddIncident> {
                         });
                       }
                     },
-                    child: Text('Add Ticket'),
+                    child: const Text('Agregar'),
                   ),
                 ),
               ],
