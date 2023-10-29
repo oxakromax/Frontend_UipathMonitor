@@ -22,7 +22,7 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-        title: Text('Gestión de organizaciones'),
+        title: const Text('Gestión de organizaciones'),
       ),
       body: Column(
         children: [
@@ -33,7 +33,7 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
               decoration: InputDecoration(
                 hintText: 'Buscar organización...',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
+                  icon: const Icon(Icons.search),
                   onPressed: () {
                     setState(() {});
                   },
@@ -46,7 +46,7 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
               future: apiProvider.getOrganizations(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
@@ -69,7 +69,7 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: ListTile(
-                          leading: Icon(Icons.business),
+                          leading: const Icon(Icons.business),
                           title: Text(org.nombre!),
                           subtitle: Text(org.uipathname!),
                           onTap: () {
@@ -83,7 +83,7 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
                             ).then((value) => {setState(() {})});
                           },
                           trailing: IconButton(
-                            icon: Icon(Icons.delete),
+                            icon: const Icon(Icons.delete),
                             onPressed: () async {
                               await apiProvider.deleteOrganization(org.id!);
                               setState(() {});
@@ -112,7 +112,7 @@ class _OrganizationListScreenState extends State<OrganizationListScreen> {
             ),
           ).then((value) => {setState(() {})});
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

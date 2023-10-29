@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ApiEndpoints {
-  static const String BaseUrl = "http://192.168.100.28:8080";
+  static const String BaseUrl = "https://p172z3x3-8080.use.devtunnels.ms";
 
   // Arrays of {Method, Endpoint}
   static const List<String> Login = ["/auth", "POST"];
