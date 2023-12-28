@@ -62,7 +62,11 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(await response.stream.bytesToString());
         var token = jsonResponse['token'];
-        Provider.of<GeneralProvider>(context, listen: false).setToken(token);
+        try {
+          Provider.of<GeneralProvider>(context, listen: false).setToken(token);
+        } catch (e, s) {
+          print(s);
+        }
         if (_rememberMe) {
           prefs.setString('email', _usuarioController.text);
           prefs.setString('password', _passwordController.text);

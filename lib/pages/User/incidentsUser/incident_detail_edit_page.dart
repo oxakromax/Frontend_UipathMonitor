@@ -189,12 +189,12 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
                   value: TicketsState.InProgress,
                   child: Text(TicketsState.InProgress),
                 ),
-              DropdownMenuItem<String>(
-                value: TicketsState.Completed,
-                child: Text(TicketsState.Completed),
-              ),
-            ],
-          ),
+                DropdownMenuItem<String>(
+                  value: TicketsState.Completed,
+                  child: Text(TicketsState.Completed),
+                ),
+              ],
+            ),
           const SizedBox(height: 20),
           Center(
             child: ElevatedButton(
@@ -229,7 +229,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
                   updatedIncident =
                       await Provider.of<ApiProvider>(context, listen: false)
                           .PostIncidentDetails(
-                        context: context,
+                    context: context,
                     incidentId: widget.incident.iD!,
                     details: _detailsController.text,
                     startDate: _startDate,
@@ -247,7 +247,7 @@ class _IncidentDetailEditPageState extends State<IncidentDetailEditPage> {
               },
               child: const Text('Guardar cambios'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
+                // backgroundColor: Theme.of(context).primaryColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 textStyle: const TextStyle(fontSize: 18),

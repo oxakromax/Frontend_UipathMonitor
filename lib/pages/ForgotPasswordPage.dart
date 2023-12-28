@@ -77,10 +77,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       // backgroundColor: Colors.grey.shade200, // color de fondo del Scaffold
       appBar: AppBar(
         title: const Text('¿Contraseña olvidada?'),
-        // backgroundColor: Colors.white, // color de fondo del appbar
-        iconTheme: const IconThemeData(
-          color: Colors.white, // color de los iconos del appbar
-        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -146,8 +142,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   ButtonStyle buildButtonStyle() {
     return ButtonStyle(
-      backgroundColor:
-      MaterialStateProperty.all(Colors.blue), // color del botón
+      // backgroundColor:
+      //     MaterialStateProperty.all(Colors.blue), // color del botón
       // redondear los bordes del botón
       shape: MaterialStateProperty.all(
         RoundedRectangleBorder(

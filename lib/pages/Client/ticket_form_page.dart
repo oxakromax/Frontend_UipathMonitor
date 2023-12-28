@@ -69,64 +69,66 @@ class _TicketFormPageState extends State<TicketFormPage> {
                   },
                 ),
                 SizedBox(height: 24.0),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      var apiProvider =
-                          Provider.of<ApiProvider>(context, listen: false);
-                      var FutureTicket =
-                          apiProvider.GetClientTicket(_ticketId, _email);
-                      // show Loading dialog
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Cargando'),
-                          content: const LinearProgressIndicator(),
-                        ),
-                      );
-                      FutureTicket.then((value) {
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => IncidentDetailsScreen(
-                              incident: value.incidentesProceso![0],
-                              ProcessClass: value,
-                            ),
-                          ),
-                        );
-                      }).onError((error, stackTrace) {
-                        Navigator.pop(context);
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        var apiProvider =
+                            Provider.of<ApiProvider>(context, listen: false);
+                        var FutureTicket =
+                            apiProvider.GetClientTicket(_ticketId, _email);
+                        // show Loading dialog
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Error'),
-                            content: const Text(
-                              "No se ha encontrado el incidente, o bien no pertenece al usuario ingresado",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
+                            title: const Text('Cargando'),
+                            content: const LinearProgressIndicator(),
                           ),
                         );
-                      });
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.blue, // Color del botón
-                    onPrimary: Colors.white, // Color del texto del botón
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                        FutureTicket.then((value) {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => IncidentDetailsScreen(
+                                incident: value.incidentesProceso![0],
+                                ProcessClass: value,
+                              ),
+                            ),
+                          );
+                        }).onError((error, stackTrace) {
+                          Navigator.pop(context);
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Error'),
+                              content: const Text(
+                                "No se ha encontrado el incidente, o bien no pertenece al usuario ingresado",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      // primary: Colors.blue, // Color del botón
+                      // onPrimary: Colors.white, // Color del texto del botón
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      elevation: 2.0, // Profundidad del botón
                     ),
-                    elevation: 2.0, // Profundidad del botón
+                    child: const Text('Submit'),
                   ),
-                  child: const Text('Submit'),
                 ),
               ],
             ),

@@ -16,7 +16,7 @@ class ProcessesListPage extends StatefulWidget {
 class _ProcessesListPageState extends State<ProcessesListPage> {
   TextEditingController _searchController = TextEditingController();
   late List<bool> _isSelectedList;
-  late List<dynamic> processes;
+  late List<dynamic> processes = [];
 
   @override
   void initState() {
@@ -32,23 +32,23 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
-        title: Text('Procesos'),
+        title: const Text('Procesos'),
         actions: [
           IconButton(
-            icon: Icon(Icons.help),
+            icon: const Icon(Icons.help),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text('Ayuda'),
-                    content: Text(
+                    title: const Text('Ayuda'),
+                    content: const Text(
                       'Si tienes el rol de administrador de procesos, se desplegarán todas las organizaciones en donde el usuario esté asignado y sus procesos. En cambio, si no, solo se mostrarán los procesos que se han asignado al usuario por un administrador.',
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text('Entendido'),
+                        child: const Text('Entendido'),
                       ),
                     ],
                   );
@@ -67,7 +67,7 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
               onEditingComplete: () {
                 setState(() {});
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Buscar',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
@@ -80,10 +80,12 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                 return FutureBuilder<dynamic>(
                   future: apiProvider.GetProcesses(),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                    if (snapshot.connectionState == ConnectionState.waiting &&
+                        processes.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error al cargar los datos'));
+                      return const Center(
+                          child: Text('Error al cargar los datos'));
                     } else {
                       processes = snapshot.data;
                       if (_searchController.text.isNotEmpty) {
@@ -215,13 +217,13 @@ class _ProcessesListPageState extends State<ProcessesListPage> {
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('Error al descargar el archivo'),
                     ),
                   );
                 }
               },
-              child: Icon(Icons.download),
+              child: const Icon(Icons.download),
               tooltip: "Descargar",
             )
           : null,

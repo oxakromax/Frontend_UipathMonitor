@@ -57,12 +57,25 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
           .GetProcess(widget.processID);
     });
 
-    Future.delayed(const Duration(milliseconds: 200)).then((_) {
-      // restore scroll position
-      if (context.mounted) {
-        _ScrollController.position.moveTo(position.pixels);
-      }
-    });
+    try {
+      // Try to return to last position
+      Future.wait([
+        _processFuture,
+      ]).then((_) => {
+            if (context.mounted)
+              {
+                // wait 200ms
+                Future.delayed(const Duration(milliseconds: 200)).then((_) {
+                  // restore scroll position
+                  if (context.mounted) {
+                    _ScrollController.position.moveTo(position.pixels);
+                  }
+                }),
+              }
+          });
+    } catch (e, s) {
+      print(s);
+    }
   }
 
   @override
@@ -98,7 +111,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 '${snapshot.data?.errorTolerance ?? ''}';
             _fatalEditController.text =
                 '${snapshot.data?.fatalTolerance ?? ''}';
-            _AliasEditController.text = '${snapshot.data?.alias ?? ''}';
+            _AliasEditController.text = snapshot.data?.alias ?? '';
             _priorityEditController.text = '${snapshot.data?.prioridad ?? ''}';
             _maxQueueEditController.text =
                 '${snapshot.data?.maxQueueTime ?? ''}';
@@ -114,7 +127,6 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
             }
 
             process = snapshot.data!;
-
             return _buildProcessDetails(context);
           }
           return const Center(child: CircularProgressIndicator());
@@ -295,7 +307,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                       showDialog(
                         context: context,
                         builder: (context) =>
-                        const Center(child: CircularProgressIndicator()),
+                            const Center(child: CircularProgressIndicator()),
                       );
                       await Provider.of<ApiProvider>(context, listen: false)
                           .UpdateProcess(process);
@@ -583,9 +595,9 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                   DataColumn(label: Flexible(child: Text('Acciones'))),
                 ],
                 source: IncidentDataSource(context, process, _filteredIncidents,
-                        () {
-                      RefreshScaffold(context);
-                    }),
+                    () {
+                  RefreshScaffold(context);
+                }),
               ),
             )
           ],
@@ -645,9 +657,9 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               SizedBox(
                 height: 70 *
                     (process.usuarios?.length != null &&
-                        process.usuarios!.length < 5
-                        ? process.usuarios?.length ?? 1
-                        : 5)
+                                process.usuarios!.length < 5
+                            ? process.usuarios?.length ?? 1
+                            : 5)
                         .toDouble(),
                 child: ListView(
                   physics: const NeverScrollableScrollPhysics(),
@@ -675,19 +687,20 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 children: [
                   TextButton.icon(
                     onPressed: () async {
-                      await _addUserDialog(context, process);
-                      RefreshScaffold(context);
+                      var refresh = await _addUserDialog(context, process);
+                      if (refresh) RefreshScaffold(context);
                     },
                     icon: const Icon(Icons.add_circle, color: Colors.green),
                     label: const Text('Agregar usuario'),
                   ),
                   TextButton.icon(
                     onPressed: () async {
-                      await _removeUserDialog(context, process, _selectedUsers);
+                      var refresh = await _removeUserDialog(
+                          context, process, _selectedUsers);
                       setState(() {
                         _selectedUsers.clear();
                       });
-                      RefreshScaffold(context);
+                      if (refresh) RefreshScaffold(context);
                     },
                     icon: const Icon(Icons.remove_circle_outline,
                         color: Colors.red),
@@ -734,20 +747,21 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
               children: [
                 TextButton.icon(
                   onPressed: () async {
-                    await _addClientDialog(context, process);
-                    RefreshScaffold(context);
+                    // Refresh or not
+                    if (await _addClientDialog(context, process))
+                      RefreshScaffold(context);
                   },
                   icon: const Icon(Icons.add_circle, color: Colors.green),
                   label: const Text('Agregar cliente'),
                 ),
                 TextButton.icon(
                   onPressed: () async {
-                    await _removeClientDialog(
+                    var refresh = await _removeClientDialog(
                         context, process, _selectedClients);
                     setState(() {
                       _selectedClients.clear();
                     });
-                    RefreshScaffold(context);
+                    if (refresh) RefreshScaffold(context);
                   },
                   icon: const Icon(Icons.remove_circle_outline,
                       color: Colors.red),
@@ -789,14 +803,18 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
   // the list of users is obtained from the API via GetUsersPossibleForProcess and it's returns list<ProcessesUsuarios>
 
   // start code
-  Future<void> _addUserDialog(BuildContext context,
-      ProcessesEntity process,) async {
+  Future<bool> _addUserDialog(
+    BuildContext context,
+    ProcessesEntity process,
+  ) async {
     final List<ProcessesUsuarios>? users =
-    await Provider.of<ApiProvider>(context, listen: false)
-        .getUsersPossibleForProcess(process.iD);
+        await Provider.of<ApiProvider>(context, listen: false)
+            .getUsersPossibleForProcess(process.iD);
     final List<ProcessesUsuarios> selectedUsers = <ProcessesUsuarios>[];
 
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
+
+    var refresh = false;
 
     await showDialog<void>(
       context: context,
@@ -879,6 +897,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                         await Provider.of<ApiProvider>(context, listen: false)
                             .addUsersToProcess(process.iD, selectedUsers);
                         Navigator.of(context).pop();
+                        refresh = true;
                       },
                     ),
                   ],
@@ -889,15 +908,17 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
         );
       },
     );
+    return refresh;
   }
 
-  Future<void> _addClientDialog(BuildContext context, ProcessesEntity process) async {
+  Future<bool> _addClientDialog(
+      BuildContext context, ProcessesEntity process) async {
     final List<ProcessesClientes>? clients =
-    await Provider.of<ApiProvider>(context, listen: false)
-        .getClientsPossibleForProcess(process.iD);
+        await Provider.of<ApiProvider>(context, listen: false)
+            .getClientsPossibleForProcess(process.iD);
     final List<ProcessesClientes> selectedClients = <ProcessesClientes>[];
-
-    if (!context.mounted) return;
+    var refresh = false;
+    if (!context.mounted) return refresh;
 
     await showDialog<void>(
       context: context,
@@ -980,6 +1001,7 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                         await Provider.of<ApiProvider>(context, listen: false)
                             .addClientsToProcess(process.iD, selectedClients);
                         Navigator.of(context).pop();
+                        refresh = true;
                       },
                     ),
                   ],
@@ -990,19 +1012,21 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
         );
       },
     );
+    return refresh;
   }
 
-  Future<void> _removeUserDialog(BuildContext context, ProcessesEntity process,
+  Future<bool> _removeUserDialog(BuildContext context, ProcessesEntity process,
       List<ProcessesUsuarios> users) async {
     String message;
     if (users.length == 1) {
       message =
-      '¿Está seguro que desea eliminar a ${users[0].nombre} ${users[0].apellido} del proceso?';
+          '¿Está seguro que desea eliminar a ${users[0].nombre} ${users[0].apellido} del proceso?';
     } else {
       message =
-      '¿Está seguro que desea eliminar a ${users.length} usuarios del proceso?';
+          '¿Está seguro que desea eliminar a ${users.length} usuarios del proceso?';
     }
-    return showDialog<void>(
+    var refresh = false;
+    await showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -1030,27 +1054,30 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 }
                 if (!context.mounted) return;
                 Navigator.of(context).pop();
+                refresh = true;
               },
             ),
           ],
         );
       },
     );
+    return refresh;
   }
 
   // Same as above, but for clients
 
-  Future<void> _removeClientDialog(BuildContext context,
+  Future<bool> _removeClientDialog(BuildContext context,
       ProcessesEntity process, List<ProcessesClientes> client) async {
     String message;
     if (client.length == 1) {
       message =
-      '¿Está seguro que desea eliminar a ${client[0].nombre} ${client[0].apellido} del proceso?';
+          '¿Está seguro que desea eliminar a ${client[0].nombre} ${client[0].apellido} del proceso?';
     } else {
       message =
-      '¿Está seguro que desea eliminar a ${client.length} clientes del proceso?';
+          '¿Está seguro que desea eliminar a ${client.length} clientes del proceso?';
     }
-    return showDialog<void>(
+    var refresh = false;
+    await showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -1078,11 +1105,13 @@ class _ProcessesViewPageState extends State<ProcessesViewPage> {
                 }
                 if (!context.mounted) return;
                 Navigator.of(context).pop();
+                refresh = true;
               },
             ),
           ],
         );
       },
     );
+    return refresh;
   }
 }

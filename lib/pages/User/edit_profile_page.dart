@@ -152,8 +152,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   return null;
                 },
               ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
+            Center(
+              heightFactor: 2,
               child: ElevatedButton(
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
